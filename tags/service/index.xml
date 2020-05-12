@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Service on Website of SauceWu </title>
-    <link>https://saucewu.top/tags/service/</link>
+    <link>https://saucewu.github.io/tags/service/</link>
     <description>Recent content in Service on Website of SauceWu </description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <lastBuildDate>Thu, 02 Apr 2020 20:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://saucewu.top/tags/service/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://saucewu.github.io/tags/service/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>VPS  被暴力尝试登录的几种解决方案</title>
-      <link>https://saucewu.top/posts/vps%E5%AE%89%E5%85%A8%E9%98%B2%E6%8A%A4/</link>
+      <link>https://saucewu.github.io/posts/vps%E5%AE%89%E5%85%A8%E9%98%B2%E6%8A%A4/</link>
       <pubDate>Thu, 02 Apr 2020 20:00:00 +0000</pubDate>
       
-      <guid>https://saucewu.top/posts/vps%E5%AE%89%E5%85%A8%E9%98%B2%E6%8A%A4/</guid>
+      <guid>https://saucewu.github.io/posts/vps%E5%AE%89%E5%85%A8%E9%98%B2%E6%8A%A4/</guid>
       <description>VPS 被暴力尝试登录的几种解决方案 [toc]
 背景 最近登录自己blog的服务器时偶然发现
  There were 34176 failed login attempts since the last successful login.</description>
@@ -24,10 +24,10 @@
     
     <item>
       <title>从零建站（基于Ubuntu 16.04）</title>
-      <link>https://saucewu.top/posts/%E4%BB%8E%E9%9B%B6%E5%BB%BA%E7%AB%99%E5%9F%BA%E4%BA%8Eubuntu-16.04/</link>
+      <link>https://saucewu.github.io/posts/%E4%BB%8E%E9%9B%B6%E5%BB%BA%E7%AB%99%E5%9F%BA%E4%BA%8Eubuntu-16.04/</link>
       <pubDate>Fri, 14 Apr 2017 18:00:00 +0000</pubDate>
       
-      <guid>https://saucewu.top/posts/%E4%BB%8E%E9%9B%B6%E5%BB%BA%E7%AB%99%E5%9F%BA%E4%BA%8Eubuntu-16.04/</guid>
+      <guid>https://saucewu.github.io/posts/%E4%BB%8E%E9%9B%B6%E5%BB%BA%E7%AB%99%E5%9F%BA%E4%BA%8Eubuntu-16.04/</guid>
       <description>从零建站（基于Ubuntu 16.04） [TOC]
 初始化 免密登录  client生成ssh公钥   **ssh-keygen -t rsa -C &amp;ldquo;xxxxx@xxxxx.</description>
     </item>

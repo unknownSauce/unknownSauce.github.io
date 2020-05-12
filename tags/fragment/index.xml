@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>fragment on Website of SauceWu </title>
-    <link>https://saucewu.top/tags/fragment/</link>
+    <link>https://saucewu.github.io/tags/fragment/</link>
     <description>Recent content in fragment on Website of SauceWu </description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <lastBuildDate>Sat, 10 Feb 2018 15:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://saucewu.top/tags/fragment/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://saucewu.github.io/tags/fragment/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Fragment 踩坑实录</title>
-      <link>https://saucewu.top/posts/fragment-%E8%B8%A9%E5%9D%91%E5%AE%9E%E5%BD%95/</link>
+      <link>https://saucewu.github.io/posts/fragment-%E8%B8%A9%E5%9D%91%E5%AE%9E%E5%BD%95/</link>
       <pubDate>Sat, 10 Feb 2018 15:00:00 +0000</pubDate>
       
-      <guid>https://saucewu.top/posts/fragment-%E8%B8%A9%E5%9D%91%E5%AE%9E%E5%BD%95/</guid>
+      <guid>https://saucewu.github.io/posts/fragment-%E8%B8%A9%E5%9D%91%E5%AE%9E%E5%BD%95/</guid>
       <description>@(四大组件)
 Fragment 踩坑实录 不要轻易使用commitNowAllowingStateLoss 在很多情况下使用不正确使用Fragment 会导致 java.lang.IllegalStateException 网上很多推荐commitNowAllowingStateLoss 来治标 但使用commitNowAllowingStateLoss 会导致当前Fragment 以其子Fragment 丢失状态 如 getVisibility() isHidden() 等等 而且会出现很多不可预知的问题</description>
     </item>
