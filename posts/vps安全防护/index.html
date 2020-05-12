@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh"><head>
+    <title> Sauce Wu | VPS  被暴力尝试登录的几种解决方案 </title>
+    <meta charset="utf-8"><meta name="generator" content="Hugo 0.70.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="https://saucewu.top/css/style.css" type="text/css">
+    
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <base href="https://saucewu.top">
+    
+    <link rel="shortcut icon" href="https://saucewu.top/favicons/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://saucewu.top/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://saucewu.top/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://saucewu.top/favicons/favicon-16x16.png">
+
+    <link rel="canonical" href="https://saucewu.top/posts/vps%E5%AE%89%E5%85%A8%E9%98%B2%E6%8A%A4/">
+</head><body><div class="sidebar animated fadeInDown">
+    <div class="logo-title">
+      <div class="title">
+        <img src="https://saucewu.top/images/profile.jpeg" alt="profile picture" style="width:127px;border-radius: 50%;">
+        <h3 title=""><a href="/">Sauce Wu Blog</a></h3>
+        <div class="description">
+          <p></p>
+        </div>
+      </div>
+    </div>
+    <ul class="social-links">
+        
+        <a href="https://github.com/SauceWu" rel="me" >
+          <i class="fa fa-github" aria-hidden="true" title="GitHub"></i>
+        </a>
+        
+        <a href="mailto:sauce.wu@hotmail.com" rel="me" >
+          <i class="fa fa-envelope" aria-hidden="true" title="e-mail"></i>
+        </a>
+        
+    </ul>
+    <div class="footer">
+        <div class="by_farbox">&copy; Sauce Wu 2020 </div>
+      </div>
+    </div>
+</div><div class="main">
+            <div class="page-top animated fadeInDown">
+    <div class="nav">
+        
+        
+        <li><a  href="/" title="">Home</a></li>
+
+        
+        <li><a  href="/posts" title="">Posts</a></li>
+
+        
+    </div>
+</div>
+            <div class="autopagerize_page_element">
+                <div class="content">
+<div class="post animated fadeInDown">
+    <div class="post-content">
+
+      <div class="post-title">
+        <h3>VPS  被暴力尝试登录的几种解决方案
+        </h3>
+        
+        </div>
+
+    <h1 id="vps-被暴力尝试登录的几种解决方案"> VPS  被暴力尝试登录的几种解决方案</h1>
+<p>[toc]</p>
+<h2 id="背景">背景</h2>
+<p>最近登录自己blog的服务器时偶然发现</p>
+<p><code> There were 34176 failed login attempts since the last successful login.</code></p>
+<p>被人扫到了端口 还被疯狂尝试登录 虽然这个破服务器没什么东西 但被破解出来被黑产拉去挖矿什么的也是有点难受的</p>
+<p>首先先看一下到底是谁在扫我的机器</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># lastb</span>
+</code></pre></div><h2 id="解决方案">解决方案</h2>
+<h3 id="1denyhost">1.denyhost</h3>
+<p>一顿google之后 被安利了denyhost这个python脚本 原理就是通过它会分析sshd的日志文件（/var/log/secure），当发现重复的攻击时就会记录IP到/etc/hosts.deny文件，从而达到自动屏IP的功能</p>
+<h4 id="install-python3">install python3</h4>
+<p><code>dnf search python36</code>
+<code>dnf info python36</code></p>
+<h4 id="install-denyhost">install denyhost</h4>
+<p><code> git clone https://github.com/denyhosts/denyhosts.git</code>
+<code>python3 setup insatll</code>
+<code> cp daemon-control-dist daemon-control</code></p>
+<pre><code>###############################################
+#### Edit these to suit your configuration ####
+###############################################
+
+DENYHOSTS_BIN   = &quot;/usr/bin/denyhosts.py&quot;
+DENYHOSTS_LOCK  = &quot;/var/lock/subsys/denyhosts&quot;
+DENYHOSTS_CFG   = &quot;/etc/denyhosts.conf&quot;
+</code></pre><p><code># chown root daemon-control</code></p>
+<p><code># chmod 700 daemon-control</code></p>
+<pre><code>/usr/bin/python3
+</code></pre><h3 id="2file2ban">2.file2ban</h3>
+<p>原理和上面的denyhost 一样 区别是。。file2ban 可以直接yum install。不需要自己编译 而且自定义功能更强大</p>
+<pre><code>#dnf install epel-release
+</code></pre><pre><code>yum install file2ban 
+</code></pre><pre><code>systemctl start fail2ban
+</code></pre><pre><code>fail2ban status
+</code></pre><pre><code>[DEFAULT]
+
+ignoreip = 192.168.56.2/24
+
+bantime = 21600
+
+findtime = 300
+
+maxretry = 3
+
+banaction = iptables-multiport
+
+backend = systemd
+
+[sshd]
+
+enabled = true
+</code></pre>
+    </div>
+    <div class="post-footer">
+      <div class="info">
+        
+        
+    <span class="separator"><a class="tag" href="/tags/vps/">VPS</a><a class="tag" href="/tags/service/">Service</a><a class="tag" href="/tags/denyhost/">denyhost</a><a class="tag" href="/tags/file2ban/">file2ban</a></span>
+
+      </div>
+    </div>
+
+    
+</div>
+
+
+                </div>
+            </div>
+        </div>
+</body>
+<script type="text/javascript" src="https://saucewu.top/js/jquery.min.js"></script>
+<script type="text/javascript" src="https://saucewu.top/js/jquery-migrate.min.js"></script>
+<script type="text/javascript" src="https://saucewu.top/js/jquery-appear.min.js"></script><script type="text/javascript" src="https://saucewu.top/js/medium-zoom.min.js"></script>
+<script>
+	mediumZoom(document.querySelectorAll('div.post-content img'), {
+        background: '#fff'
+    });
+</script>
+<link rel="stylesheet" href="https://saucewu.top/css/medium-zoom.css" type="text/css">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-166235531-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+</html></body>
+
+</html>

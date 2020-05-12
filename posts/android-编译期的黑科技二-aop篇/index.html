@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh"><head>
+    <title> Sauce Wu | Android 编译期的黑科技（二）基础篇 </title>
+    <meta charset="utf-8"><meta name="generator" content="Hugo 0.70.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="https://saucewu.top/css/style.css" type="text/css">
+    
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <base href="https://saucewu.top">
+    
+    <link rel="shortcut icon" href="https://saucewu.top/favicons/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://saucewu.top/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://saucewu.top/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://saucewu.top/favicons/favicon-16x16.png">
+
+    <link rel="canonical" href="https://saucewu.top/posts/android-%E7%BC%96%E8%AF%91%E6%9C%9F%E7%9A%84%E9%BB%91%E7%A7%91%E6%8A%80%E4%BA%8C-aop%E7%AF%87/">
+</head><body><div class="sidebar animated fadeInDown">
+    <div class="logo-title">
+      <div class="title">
+        <img src="https://saucewu.top/images/profile.jpeg" alt="profile picture" style="width:127px;border-radius: 50%;">
+        <h3 title=""><a href="/">Sauce Wu Blog</a></h3>
+        <div class="description">
+          <p></p>
+        </div>
+      </div>
+    </div>
+    <ul class="social-links">
+        
+        <a href="https://github.com/SauceWu" rel="me" >
+          <i class="fa fa-github" aria-hidden="true" title="GitHub"></i>
+        </a>
+        
+        <a href="mailto:sauce.wu@hotmail.com" rel="me" >
+          <i class="fa fa-envelope" aria-hidden="true" title="e-mail"></i>
+        </a>
+        
+    </ul>
+    <div class="footer">
+        <div class="by_farbox">&copy; Sauce Wu 2020 </div>
+      </div>
+    </div>
+</div><div class="main">
+            <div class="page-top animated fadeInDown">
+    <div class="nav">
+        
+        
+        <li><a  href="/" title="">Home</a></li>
+
+        
+        <li><a  href="/posts" title="">Posts</a></li>
+
+        
+    </div>
+</div>
+            <div class="autopagerize_page_element">
+                <div class="content">
+<div class="post animated fadeInDown">
+    <div class="post-content">
+
+      <div class="post-title">
+        <h3>Android 编译期的黑科技（二）基础篇
+        </h3>
+        
+        </div>
+
+    <p>@(奇淫技巧)</p>
+<h1 id="android-编译期的黑科技二-aop篇">Android 编译期的黑科技（二）-AOP篇</h1>
+<h2 id="aop-定义">AOP 定义</h2>
+<p>AOP 是 Aspect Oriented Programming 的缩写，即“面向切面编程”。使用 AOP，可以在编译期间对代码进行动态管理， 以达到统一维护的目的。AOP 是 OOP 编程的一种延续，也是 Spring 框架中的一个重要模块。利用 AOP 可以对业务逻辑 的各个模块进行隔离，从而使得业务逻辑各个部分之间的耦合度降低，提高程序的可重用性，同时提高开发的效率。利用 AOP，我们可以在无浸入的在宿主中插入一些代码逻辑，从而可以实现一些特殊的功能，比如日志埋点、性能监控、动态 权限控制、代码调试等。</p>
+<h3 id="优点">优点</h3>
+<ul>
+<li>织入的代码都是Java代码没有过多的学习难度</li>
+</ul>
+<h3 id="缺点">缺点</h3>
+<ul>
+<li>无法织入第三方的库</li>
+<li>由于定义的切点依赖编程语言，该方案无法兼容 Lambda 语法</li>
+</ul>
+<h2 id="使用">使用</h2>
+<p>AOP只是个概念的定义有很多库都可以实现。例如Javapoet/AspectJ。使用的方法都很相似这里只介绍Javapoet。
+防不胜防来啦这部分会用<a href="https://github.com/SauceWu/InjectExtra">InjectExtra</a>为例解释</p>
+<h4 id="标记需要操作的位置">标记需要操作的位置</h4>
+<p>通常会使用一个注解去表示 也可以对固定方法进行织入</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">InjectExtra<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;data&#34;</span><span style="color:#f92672">)</span>
+    String data<span style="color:#f92672">;</span>
+</code></pre></div><h4 id="在编译过程中寻找标记">在编译过程中寻找标记</h4>
+<p>遍历类中所有被注解的元素并生成代码写入</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">AutoService<span style="color:#f92672">(</span>Processor<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span><span style="color:#75715e">//自动生成javax.annotation.processing.IProcessor 文件
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">@SupportedSourceVersion</span><span style="color:#f92672">(</span>SourceVersion<span style="color:#f92672">.</span><span style="color:#a6e22e">RELEASE_8</span><span style="color:#f92672">)</span><span style="color:#75715e">//java版本支持
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AnnotationProcessor</span> <span style="color:#66d9ef">extends</span> AbstractProcessor <span style="color:#f92672">{</span>
+<span style="color:#f92672">...</span>
+ <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">process</span><span style="color:#f92672">(</span>Set<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">extends</span> TypeElement<span style="color:#f92672">&gt;</span> annotations<span style="color:#f92672">,</span> RoundEnvironment roundEnv<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        mAnnotatedClassMap<span style="color:#f92672">.</span><span style="color:#a6e22e">clear</span><span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+        <span style="color:#75715e">//遍历元素找到被标记的方法或变量
+</span><span style="color:#75715e"></span>           <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>Element element <span style="color:#f92672">:</span> roundEnv<span style="color:#f92672">.</span><span style="color:#a6e22e">getElementsAnnotatedWith</span><span style="color:#f92672">(</span>InjectExtra<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+            ExtraAnnotationProcessor annotatedClass <span style="color:#f92672">=</span> getAnnotatedClass<span style="color:#f92672">(</span>element<span style="color:#f92672">);</span>
+            BindExtraField field <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> BindExtraField<span style="color:#f92672">(</span>element<span style="color:#f92672">);</span>
+            annotatedClass<span style="color:#f92672">.</span><span style="color:#a6e22e">addField</span><span style="color:#f92672">(</span>field<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>IllegalArgumentException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#75715e">// stop process
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>ExtraAnnotationProcessor annotatedClass <span style="color:#f92672">:</span> mAnnotatedClassMap<span style="color:#f92672">.</span><span style="color:#a6e22e">values</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+           <span style="color:#75715e">//将新生成的文件写入
+</span><span style="color:#75715e"></span>          annotatedClass<span style="color:#f92672">.</span><span style="color:#a6e22e">generateFinder</span><span style="color:#f92672">().</span><span style="color:#a6e22e">writeTo</span><span style="color:#f92672">(</span>mFiler<span style="color:#f92672">);</span>
+<span style="color:#f92672">...</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#f92672">...</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h3 id="写入规则">写入规则</h3>
+<ul>
+<li>$L for Literals</li>
+<li>$S for Strings</li>
+<li>$T for Types</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>BindExtraField field <span style="color:#f92672">:</span> mFields<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#75715e">// find views
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>isSubtypeOfType<span style="color:#f92672">(</span>typeMirror<span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;android.app.Activity&#34;</span><span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+                injectMethodBuilder<span style="color:#f92672">.</span><span style="color:#a6e22e">addStatement</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Object $N = target.getIntent().getExtras().get($S)&#34;</span><span style="color:#f92672">,</span> field<span style="color:#f92672">.</span><span style="color:#a6e22e">getFieldName</span><span style="color:#f92672">(),</span> field<span style="color:#f92672">.</span><span style="color:#a6e22e">getKey</span><span style="color:#f92672">());</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+                injectMethodBuilder<span style="color:#f92672">.</span><span style="color:#a6e22e">addStatement</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Object $N = target.getArguments().get($S)&#34;</span><span style="color:#f92672">,</span> field<span style="color:#f92672">.</span><span style="color:#a6e22e">getFieldName</span><span style="color:#f92672">(),</span> field<span style="color:#f92672">.</span><span style="color:#a6e22e">getKey</span><span style="color:#f92672">());</span>
+            <span style="color:#f92672">}</span>
+
+            injectMethodBuilder<span style="color:#f92672">.</span><span style="color:#a6e22e">addStatement</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;if($N!=null)\ntarget.$N = ($T)$N&#34;</span><span style="color:#f92672">,</span> field<span style="color:#f92672">.</span><span style="color:#a6e22e">getFieldName</span><span style="color:#f92672">(),</span> field<span style="color:#f92672">.</span><span style="color:#a6e22e">getFieldName</span><span style="color:#f92672">(),</span> ClassName<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>field<span style="color:#f92672">.</span><span style="color:#a6e22e">getFieldType</span><span style="color:#f92672">()),</span> field<span style="color:#f92672">.</span><span style="color:#a6e22e">getFieldName</span><span style="color:#f92672">());</span>
+
+        <span style="color:#f92672">}</span>
+</code></pre></div><h2 id="总结">总结</h2>
+<p>使用AOP方式织入代码可以说是最简单的方式了。没有语言障碍只需把需要的java代码植入就好了。主要缺陷就是必须在原本的代码中显示调用才可以成功使用，无法无痕使用。</p>
+
+    </div>
+    <div class="post-footer">
+      <div class="info">
+        
+        
+    <span class="separator"><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/aop/">aop</a></span>
+
+      </div>
+    </div>
+
+    
+</div>
+
+
+                </div>
+            </div>
+        </div>
+</body>
+<script type="text/javascript" src="https://saucewu.top/js/jquery.min.js"></script>
+<script type="text/javascript" src="https://saucewu.top/js/jquery-migrate.min.js"></script>
+<script type="text/javascript" src="https://saucewu.top/js/jquery-appear.min.js"></script><script type="text/javascript" src="https://saucewu.top/js/medium-zoom.min.js"></script>
+<script>
+	mediumZoom(document.querySelectorAll('div.post-content img'), {
+        background: '#fff'
+    });
+</script>
+<link rel="stylesheet" href="https://saucewu.top/css/medium-zoom.css" type="text/css">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-166235531-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+</html></body>
+
+</html>

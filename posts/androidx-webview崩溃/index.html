@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh"><head>
+    <title> Sauce Wu | 关于 Androidx 的5.x版本 webview crash </title>
+    <meta charset="utf-8"><meta name="generator" content="Hugo 0.70.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="https://saucewu.top/css/style.css" type="text/css">
+    
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <base href="https://saucewu.top">
+    
+    <link rel="shortcut icon" href="https://saucewu.top/favicons/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://saucewu.top/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://saucewu.top/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://saucewu.top/favicons/favicon-16x16.png">
+
+    <link rel="canonical" href="https://saucewu.top/posts/androidx-webview%E5%B4%A9%E6%BA%83/">
+</head><body><div class="sidebar animated fadeInDown">
+    <div class="logo-title">
+      <div class="title">
+        <img src="https://saucewu.top/images/profile.jpeg" alt="profile picture" style="width:127px;border-radius: 50%;">
+        <h3 title=""><a href="/">Sauce Wu Blog</a></h3>
+        <div class="description">
+          <p></p>
+        </div>
+      </div>
+    </div>
+    <ul class="social-links">
+        
+        <a href="https://github.com/SauceWu" rel="me" >
+          <i class="fa fa-github" aria-hidden="true" title="GitHub"></i>
+        </a>
+        
+        <a href="mailto:sauce.wu@hotmail.com" rel="me" >
+          <i class="fa fa-envelope" aria-hidden="true" title="e-mail"></i>
+        </a>
+        
+    </ul>
+    <div class="footer">
+        <div class="by_farbox">&copy; Sauce Wu 2020 </div>
+      </div>
+    </div>
+</div><div class="main">
+            <div class="page-top animated fadeInDown">
+    <div class="nav">
+        
+        
+        <li><a  href="/" title="">Home</a></li>
+
+        
+        <li><a  href="/posts" title="">Posts</a></li>
+
+        
+    </div>
+</div>
+            <div class="autopagerize_page_element">
+                <div class="content">
+<div class="post animated fadeInDown">
+    <div class="post-content">
+
+      <div class="post-title">
+        <h3>关于 Androidx 的5.x版本 webview crash
+        </h3>
+        
+        </div>
+
+    <h1 id="关于-androidx-的5x版本-webview-crash">关于 Androidx 的5.x版本 webview crash</h1>
+<p>这两更新了androidx compat 在5.x一下版本手机上遇到crash问题</p>
+<pre><code>android.content.res.Resources$NotFoundException: String resource ID #0x2040002
+
+</code></pre><p>确定是androidx 1.1.0版本问题 <a href="https://issuetracker.google.com/issues/141132133">google issue</a></p>
+<p>而且是只有 1.1.0 正式包才会有问题。以后还是少升级这种基础包为好</p>
+
+    </div>
+    <div class="post-footer">
+      <div class="info">
+        
+        
+    <span class="separator"><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/webview/">webview</a></span>
+
+      </div>
+    </div>
+
+    
+</div>
+
+
+                </div>
+            </div>
+        </div>
+</body>
+<script type="text/javascript" src="https://saucewu.top/js/jquery.min.js"></script>
+<script type="text/javascript" src="https://saucewu.top/js/jquery-migrate.min.js"></script>
+<script type="text/javascript" src="https://saucewu.top/js/jquery-appear.min.js"></script><script type="text/javascript" src="https://saucewu.top/js/medium-zoom.min.js"></script>
+<script>
+	mediumZoom(document.querySelectorAll('div.post-content img'), {
+        background: '#fff'
+    });
+</script>
+<link rel="stylesheet" href="https://saucewu.top/css/medium-zoom.css" type="text/css">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-166235531-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+</html></body>
+
+</html>

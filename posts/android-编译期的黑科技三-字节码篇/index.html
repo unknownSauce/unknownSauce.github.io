@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh"><head>
+    <title> Sauce Wu | Android 编译期的黑科技（三）-字节码篇 </title>
+    <meta charset="utf-8"><meta name="generator" content="Hugo 0.70.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="https://saucewu.top/css/style.css" type="text/css">
+    
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <base href="https://saucewu.top">
+    
+    <link rel="shortcut icon" href="https://saucewu.top/favicons/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://saucewu.top/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://saucewu.top/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://saucewu.top/favicons/favicon-16x16.png">
+
+    <link rel="canonical" href="https://saucewu.top/posts/android-%E7%BC%96%E8%AF%91%E6%9C%9F%E7%9A%84%E9%BB%91%E7%A7%91%E6%8A%80%E4%B8%89-%E5%AD%97%E8%8A%82%E7%A0%81%E7%AF%87/">
+</head><body><div class="sidebar animated fadeInDown">
+    <div class="logo-title">
+      <div class="title">
+        <img src="https://saucewu.top/images/profile.jpeg" alt="profile picture" style="width:127px;border-radius: 50%;">
+        <h3 title=""><a href="/">Sauce Wu Blog</a></h3>
+        <div class="description">
+          <p></p>
+        </div>
+      </div>
+    </div>
+    <ul class="social-links">
+        
+        <a href="https://github.com/SauceWu" rel="me" >
+          <i class="fa fa-github" aria-hidden="true" title="GitHub"></i>
+        </a>
+        
+        <a href="mailto:sauce.wu@hotmail.com" rel="me" >
+          <i class="fa fa-envelope" aria-hidden="true" title="e-mail"></i>
+        </a>
+        
+    </ul>
+    <div class="footer">
+        <div class="by_farbox">&copy; Sauce Wu 2020 </div>
+      </div>
+    </div>
+</div><div class="main">
+            <div class="page-top animated fadeInDown">
+    <div class="nav">
+        
+        
+        <li><a  href="/" title="">Home</a></li>
+
+        
+        <li><a  href="/posts" title="">Posts</a></li>
+
+        
+    </div>
+</div>
+            <div class="autopagerize_page_element">
+                <div class="content">
+<div class="post animated fadeInDown">
+    <div class="post-content">
+
+      <div class="post-title">
+        <h3>Android 编译期的黑科技（三）-字节码篇
+        </h3>
+        
+        </div>
+
+    <p>@(奇淫技巧)</p>
+<h1 id="android-编译期的黑科技三-字节码篇">Android 编译期的黑科技（三）-字节码篇</h1>
+<h2 id="字节码织入">字节码织入</h2>
+<p>可以绕过编译，直接操作字节码，从而实现代码注入。所以使用 Javassist 的时机就是在构建工具 Gradle 将源 文件编译成 .class 文件之后，在将 .class 打包成 .dex 文件之前。也有两个相当成熟的字节码框架可供使用。使用起来大同小异这节主要介绍ASM</p>
+<h3 id="asm">ASM</h3>
+<p>ASM 是一个 Java 字节码操控框架。它能被用来动态生成类或者增强既有类的功能。ASM 可以直接产生二进制 class 文件，也可以在类被加载入 Java 虚拟机之前动态改变类行为。Java class 被存储在严格格式定义的 .class 文件里，这些类文件拥有足够的元数据来解析类中的所有元素：类名称、方法、属性以及 Java 字节码（指令）。ASM 从类文件中读入信息后，能够改变类行为，分析类信息，甚至能够根据用户要求生成新类。</p>
+<h3 id="javaassist">Javaassist</h3>
+<p>java 字节码以二进制的形式存储在 .class 文件中，每一个 .class 文件包含一个 Java 类或接口。Javaassist 就是一个用来 处理 Java 字节码的类库。它可以在一个已经编译好的类中添加新的方法，或者是修改已有的方法，并且不需要对字节码方面有深入的了解。与ASM的主要区别在于不能生成新类</p>
+<h4 id="优点">优点</h4>
+<ul>
+<li>功能强大 几乎能完成所有需求</li>
+</ul>
+<h4 id="缺点">缺点</h4>
+<ul>
+<li>需要对字节码有一定了解  有一定技术壁垒</li>
+</ul>
+<h3 id="使用">使用</h3>
+<h4 id="依赖">依赖</h4>
+<p>AMS 是以插件形式被引用到项目中的 最简单的方式莫过于写在 buildSrc文件夹中 会自动被Gradle识别为插件</p>
+<h4 id="具体使用">具体使用</h4>
+<p>在这里会用一个简单的Hook  View.onClickListener() 的例子来讲解用法
+完整的demo请点这里 <a href="https://github.com/SauceWu/AMSDemo">ASMDemo</a></p>
+<h4 id="plugin">Plugin</h4>
+<p>首先要注册到Gradle Transform的回调中</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-groovy" data-lang="groovy"> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AsmTran</span> <span style="color:#66d9ef">implements</span> Plugin<span style="color:#f92672">&lt;</span>Project<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">apply</span><span style="color:#f92672">(</span>Project project<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        AppExtension appExtension <span style="color:#f92672">=</span> project<span style="color:#f92672">.</span><span style="color:#a6e22e">extensions</span><span style="color:#f92672">.</span><span style="color:#a6e22e">findByType</span><span style="color:#f92672">(</span>AppExtension<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span>
+        appExtension<span style="color:#f92672">.</span><span style="color:#a6e22e">registerTransform</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> ClickTransform<span style="color:#f92672">())</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h4 id="transform">Transform</h4>
+<p>确定要对哪些类进行处理 Android中通常要排除R文件以及androidSDK</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-groovy" data-lang="groovy"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ClickTransform</span> <span style="color:#66d9ef">extends</span> Transform <span style="color:#f92672">{</span>
+ <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">transform</span><span style="color:#f92672">(</span>TransformInvocation transformInvocation<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        transformInvocation<span style="color:#f92672">.</span><span style="color:#a6e22e">inputs</span><span style="color:#f92672">.</span><span style="color:#a6e22e">each</span> <span style="color:#f92672">{</span>
+            TransformInput input <span style="color:#f92672">-&gt;</span>
+                input<span style="color:#f92672">.</span><span style="color:#a6e22e">directoryInputs</span><span style="color:#f92672">.</span><span style="color:#a6e22e">each</span> <span style="color:#f92672">{</span>
+                    DirectoryInput directoryInput <span style="color:#f92672">-&gt;</span>
+                   <span style="color:#75715e">//                  dir.traverse(type: FileType.FILES, nameFilter: ~/.*\.class/) {
+</span><span style="color:#75715e"></span>                            File inputFile <span style="color:#f92672">-&gt;</span>
+                                waitableExecutor<span style="color:#f92672">.</span><span style="color:#a6e22e">execute</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> Callable<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">&gt;()</span> <span style="color:#f92672">{</span>
+                                    <span style="color:#a6e22e">@Override</span>
+                                    Object <span style="color:#a6e22e">call</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+                                        File modified <span style="color:#f92672">=</span> modifyClassFile<span style="color:#f92672">(</span>dir<span style="color:#f92672">,</span> inputFile<span style="color:#f92672">,</span> context<span style="color:#f92672">.</span><span style="color:#a6e22e">getTemporaryDir</span><span style="color:#f92672">())</span>
+                                        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>modified <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                                            File target <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> File<span style="color:#f92672">(</span>inputFile<span style="color:#f92672">.</span><span style="color:#a6e22e">absolutePath</span><span style="color:#f92672">.</span><span style="color:#a6e22e">replace</span><span style="color:#f92672">(</span>srcDirPath<span style="color:#f92672">,</span> destDirPath<span style="color:#f92672">))</span>
+                                            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>target<span style="color:#f92672">.</span><span style="color:#a6e22e">exists</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+                                                target<span style="color:#f92672">.</span><span style="color:#a6e22e">delete</span><span style="color:#f92672">()</span>
+                                            <span style="color:#f92672">}</span>
+                                            FileUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">copyFile</span><span style="color:#f92672">(</span>modified<span style="color:#f92672">,</span> target<span style="color:#f92672">)</span>
+                                            modified<span style="color:#f92672">.</span><span style="color:#a6e22e">delete</span><span style="color:#f92672">()</span>
+                                        <span style="color:#f92672">}</span>
+                                        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span>
+                                    <span style="color:#f92672">}</span>
+                                <span style="color:#f92672">})</span>
+                        <span style="color:#f92672">}</span>
+                       
+                        <span style="color:#f92672">}}}</span>
+ 
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h4 id="classvisitor">ClassVisitor</h4>
+<p>重头戏来了  在这个类里会进行具体.class的解析  确定那个方法会被织入</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-groovy" data-lang="groovy"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ClickClassVisitor</span> <span style="color:#66d9ef">extends</span> ClassVisitor <span style="color:#66d9ef">implements</span> Opcodes <span style="color:#f92672">{</span>
+<span style="color:#f92672">...</span>
+
+<span style="color:#f92672">...</span>
+<span style="color:#75715e">//扫描方法
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">@Override</span>
+    MethodVisitor <span style="color:#a6e22e">visitMethod</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> access<span style="color:#f92672">,</span> String name<span style="color:#f92672">,</span> String descriptor<span style="color:#f92672">,</span> String signature<span style="color:#f92672">,</span> String<span style="color:#f92672">[]</span> exceptions<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+
+        MethodVisitor methodVisitor <span style="color:#f92672">=</span> cv<span style="color:#f92672">.</span><span style="color:#a6e22e">visitMethod</span><span style="color:#f92672">(</span>access<span style="color:#f92672">,</span> name<span style="color:#f92672">,</span> descriptor<span style="color:#f92672">,</span> signature<span style="color:#f92672">,</span> exceptions<span style="color:#f92672">)</span>
+        String nameDesc <span style="color:#f92672">=</span> name <span style="color:#f92672">+</span> descriptor
+
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>nameDesc <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;onClick(Landroid/view/View;)V&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            println<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;插入！&#34;</span><span style="color:#f92672">)</span>
+            methodVisitor <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ClickMethodVisitor<span style="color:#f92672">(</span>methodVisitor<span style="color:#f92672">,</span> access<span style="color:#f92672">,</span> name<span style="color:#f92672">,</span> descriptor<span style="color:#f92672">)</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> methodVisitor
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#f92672">...</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><h4 id="adviceadapter">AdviceAdapter</h4>
+<p>具体织入的代码会在这里</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-groovy" data-lang="groovy"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ClickMethodVisitor</span> <span style="color:#66d9ef">extends</span> AdviceAdapter <span style="color:#f92672">{</span>
+  <span style="color:#f92672">...</span>
+  <span style="color:#75715e">//会在实际方法前织入代码
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">@Override</span>
+        <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">onMethodEnter</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">super</span><span style="color:#f92672">.</span><span style="color:#a6e22e">onMethodEnter</span><span style="color:#f92672">()</span>
+            methodVisitor<span style="color:#f92672">.</span><span style="color:#a6e22e">visitVarInsn</span><span style="color:#f92672">(</span>ALOAD<span style="color:#f92672">,</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">)</span>
+            methodVisitor<span style="color:#f92672">.</span><span style="color:#a6e22e">visitLdcInsn</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;log hook&#34;</span><span style="color:#f92672">)</span>
+            methodVisitor<span style="color:#f92672">.</span><span style="color:#a6e22e">visitLdcInsn</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;start&#34;</span><span style="color:#f92672">)</span>
+            methodVisitor<span style="color:#f92672">.</span><span style="color:#a6e22e">visitMethodInsn</span><span style="color:#f92672">(</span>INVOKESTATIC<span style="color:#f92672">,</span> Log<span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;d&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;(Ljava/lang/String;Ljava/lang/String;)I&#34;</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">)</span>
+        <span style="color:#f92672">}</span>
+  <span style="color:#75715e">//会在实际方法后织入代码
+</span><span style="color:#75715e"></span>        <span style="color:#a6e22e">@Override</span>
+        <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">onMethodExit</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> opcode<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">super</span><span style="color:#f92672">.</span><span style="color:#a6e22e">onMethodExit</span><span style="color:#f92672">(</span>opcode<span style="color:#f92672">)</span>
+            methodVisitor<span style="color:#f92672">.</span><span style="color:#a6e22e">visitVarInsn</span><span style="color:#f92672">(</span>ALOAD<span style="color:#f92672">,</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">)</span>
+            methodVisitor<span style="color:#f92672">.</span><span style="color:#a6e22e">visitMethodInsn</span><span style="color:#f92672">(</span>INVOKESTATIC<span style="color:#f92672">,</span> click<span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;trackViewOnClick&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;(Landroid/view/View;)V&#34;</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">)</span>
+            methodVisitor<span style="color:#f92672">.</span><span style="color:#a6e22e">visitVarInsn</span><span style="color:#f92672">(</span>ALOAD<span style="color:#f92672">,</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">)</span>
+            methodVisitor<span style="color:#f92672">.</span><span style="color:#a6e22e">visitLdcInsn</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;log hook&#34;</span><span style="color:#f92672">)</span>
+            methodVisitor<span style="color:#f92672">.</span><span style="color:#a6e22e">visitLdcInsn</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;end&#34;</span><span style="color:#f92672">)</span>
+            methodVisitor<span style="color:#f92672">.</span><span style="color:#a6e22e">visitMethodInsn</span><span style="color:#f92672">(</span>INVOKESTATIC<span style="color:#f92672">,</span> Log<span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;d&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;(Ljava/lang/String;Ljava/lang/String;)I&#34;</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">)</span>
+
+        <span style="color:#f92672">}</span>
+<span style="color:#f92672">...</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><h3 id="字节码基础">字节码基础</h3>
+<p>要精通ASM使用最终还是要了解字节码的生成 这里推荐一个插件ASM ByteCode Outline
+可以将java 直接转成字节码文件 可以根据需求直接ctrl-c+ctrl-v 是不是很轻松呢</p>
+<h2 id="总结">总结</h2>
+<p>字节码织入相对使用AOP生成代码使用难度稍高，至少需要对字节码的转换有一定了解。但是经过短暂学习之后会发现这个方式几乎是无所不能的，非常好用。</p>
+
+    </div>
+    <div class="post-footer">
+      <div class="info">
+        
+        
+    <span class="separator"><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/aop/">aop</a></span>
+
+      </div>
+    </div>
+
+    
+</div>
+
+
+                </div>
+            </div>
+        </div>
+</body>
+<script type="text/javascript" src="https://saucewu.top/js/jquery.min.js"></script>
+<script type="text/javascript" src="https://saucewu.top/js/jquery-migrate.min.js"></script>
+<script type="text/javascript" src="https://saucewu.top/js/jquery-appear.min.js"></script><script type="text/javascript" src="https://saucewu.top/js/medium-zoom.min.js"></script>
+<script>
+	mediumZoom(document.querySelectorAll('div.post-content img'), {
+        background: '#fff'
+    });
+</script>
+<link rel="stylesheet" href="https://saucewu.top/css/medium-zoom.css" type="text/css">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-166235531-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+</html></body>
+
+</html>

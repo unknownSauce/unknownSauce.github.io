@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>webview on Website of SauceWu </title>
+    <link>https://saucewu.top/tags/webview/</link>
+    <description>Recent content in webview on Website of SauceWu </description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <lastBuildDate>Tue, 10 Mar 2020 15:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://saucewu.top/tags/webview/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>关于 Androidx 的5.x版本 webview crash</title>
+      <link>https://saucewu.top/posts/androidx-webview%E5%B4%A9%E6%BA%83/</link>
+      <pubDate>Tue, 10 Mar 2020 15:00:00 +0000</pubDate>
+      
+      <guid>https://saucewu.top/posts/androidx-webview%E5%B4%A9%E6%BA%83/</guid>
+      <description>关于 Androidx 的5.x版本 webview crash 这两更新了androidx compat 在5.x一下版本手机上遇到crash问题
+android.content.res.Resources$NotFoundException: String resource ID #0x2040002 确定是androidx 1.</description>
+    </item>
+    
+    <item>
+      <title> WebView页面 软键盘弹出无法正确折叠页面的问题</title>
+      <link>https://saucewu.top/posts/%E6%B2%89%E6%B5%B8%E5%BC%8F%E7%8A%B6%E6%80%81%E6%A0%8F%E7%9A%84%E8%BD%AF%E9%94%AE%E7%9B%98%E5%BC%B9%E5%87%BA%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Thu, 03 May 2018 18:30:00 +0000</pubDate>
+      
+      <guid>https://saucewu.top/posts/%E6%B2%89%E6%B5%B8%E5%BC%8F%E7%8A%B6%E6%80%81%E6%A0%8F%E7%9A%84%E8%BD%AF%E9%94%AE%E7%9B%98%E5%BC%B9%E5%87%BA%E9%97%AE%E9%A2%98/</guid>
+      <description>WebView页面 软键盘弹出无法正确折叠页面的问题 问题出在webview页面 选中webview中edit控件弹出的软键盘 无法正确折叠页面 遮挡了输入框。一开始认为是webview的适配问题，想当然的加上了
+&amp;lt;activity android:name=&amp;#34;.WebViewActivity&amp;#34; android:windowSoftInputMode=&amp;#34;adjustPan&amp;#34; &amp;gt; .</description>
+    </item>
+    
+  </channel>
+</rss>

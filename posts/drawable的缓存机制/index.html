@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh"><head>
+    <title> Sauce Wu | 从 setTint 引发的Drawable 的缓存问题 </title>
+    <meta charset="utf-8"><meta name="generator" content="Hugo 0.70.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="https://saucewu.top/css/style.css" type="text/css">
+    
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <base href="https://saucewu.top">
+    
+    <link rel="shortcut icon" href="https://saucewu.top/favicons/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://saucewu.top/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://saucewu.top/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://saucewu.top/favicons/favicon-16x16.png">
+
+    <link rel="canonical" href="https://saucewu.top/posts/drawable%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6/">
+</head><body><div class="sidebar animated fadeInDown">
+    <div class="logo-title">
+      <div class="title">
+        <img src="https://saucewu.top/images/profile.jpeg" alt="profile picture" style="width:127px;border-radius: 50%;">
+        <h3 title=""><a href="/">Sauce Wu Blog</a></h3>
+        <div class="description">
+          <p></p>
+        </div>
+      </div>
+    </div>
+    <ul class="social-links">
+        
+        <a href="https://github.com/SauceWu" rel="me" >
+          <i class="fa fa-github" aria-hidden="true" title="GitHub"></i>
+        </a>
+        
+        <a href="mailto:sauce.wu@hotmail.com" rel="me" >
+          <i class="fa fa-envelope" aria-hidden="true" title="e-mail"></i>
+        </a>
+        
+    </ul>
+    <div class="footer">
+        <div class="by_farbox">&copy; Sauce Wu 2020 </div>
+      </div>
+    </div>
+</div><div class="main">
+            <div class="page-top animated fadeInDown">
+    <div class="nav">
+        
+        
+        <li><a  href="/" title="">Home</a></li>
+
+        
+        <li><a  href="/posts" title="">Posts</a></li>
+
+        
+    </div>
+</div>
+            <div class="autopagerize_page_element">
+                <div class="content">
+<div class="post animated fadeInDown">
+    <div class="post-content">
+
+      <div class="post-title">
+        <h3>从 setTint 引发的Drawable 的缓存问题
+        </h3>
+        
+        </div>
+
+    <h1 id="从-settint-引发的drawable-的缓存问题">从 setTint 引发的Drawable 的缓存问题</h1>
+<p>这两天在做一个新需求是突然发现 DrawableCompat.setTint()更改drawable 渲染颜色的方法居然是全局生效的。变相说明getResource().getDrawable() 每次取出drawable的时候都是从一个缓存池里面出去的。</p>
+<h3 id="避免缓存的解决方案">避免缓存的解决方案</h3>
+<p>第一反应是clone一个新的对象出来进行修改 但是貌似drawable并没有实现Cloneable的借口0那看来得想想别的办法了</p>
+<p>看了一会源码果然google在drawable类中已经给我们提供了一个 mutate方法 看注释看似乎这个方法可以返回一个新的drawable对象</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * Make this drawable mutable. This operation cannot be reversed. A mutable
+</span><span style="color:#75715e">     * drawable is guaranteed to not share its state with any other drawable.
+</span><span style="color:#75715e">     * This is especially useful when you need to modify properties of drawables
+</span><span style="color:#75715e">     * loaded from resources. By default, all drawables instances loaded from
+</span><span style="color:#75715e">     * the same resource share a common state; if you modify the state of one
+</span><span style="color:#75715e">     * instance, all the other instances will receive the same modification.
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * Calling this method on a mutable Drawable will have no effect.
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @return This drawable.
+</span><span style="color:#75715e">     * @see ConstantState
+</span><span style="color:#75715e">     * @see #getConstantState()
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">@NonNull</span> Drawable <span style="color:#a6e22e">mutate</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><p>最终的实现是根据不同的drawable类型有不同的实现方式 这里就用bitmapdrawable作为例子  不仅clone了的对象 还禁止了这个对象再次被复制 猜测是为了方式无限clone导致oom</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">  <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * A mutable BitmapDrawable still shares its Bitmap with any other Drawable
+</span><span style="color:#75715e">     * that comes from the same resource.
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @return This drawable.
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> Drawable <span style="color:#a6e22e">mutate</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>mMutated <span style="color:#f92672">&amp;&amp;</span> <span style="color:#66d9ef">super</span><span style="color:#f92672">.</span><span style="color:#a6e22e">mutate</span><span style="color:#f92672">()</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            mBitmapState <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> BitmapState<span style="color:#f92672">(</span>mBitmapState<span style="color:#f92672">);</span>
+            mMutated <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><h3 id="drawable的缓存机制">drawable的缓存机制</h3>
+<p>在ResourcesImpl类中 看到 drawable 是根据 theme 和 density判断是否使用缓存的 大部分的机制缓存注释已经说的很明白了</p>
+<ul>
+<li>1 判断是否符合当前dpi</li>
+<li>2 判断该theme 是否被缓存 有则直接返回</li>
+<li>3 从预加载的缓存池中取出 有则直接返回（在我们的app中这个直接忽略）</li>
+<li>4 调用loadDrawableForCookie</li>
+</ul>
+<p>Ps ：color 和drawable的缓存都是分开的</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">       <span style="color:#a6e22e">@Nullable</span>
+    Drawable <span style="color:#a6e22e">loadDrawable</span><span style="color:#f92672">(</span><span style="color:#a6e22e">@NonNull</span> Resources wrapper<span style="color:#f92672">,</span> <span style="color:#a6e22e">@NonNull</span> TypedValue value<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> id<span style="color:#f92672">,</span>
+            <span style="color:#66d9ef">int</span> density<span style="color:#f92672">,</span> <span style="color:#a6e22e">@Nullable</span> Resources<span style="color:#f92672">.</span><span style="color:#a6e22e">Theme</span> theme<span style="color:#f92672">)</span>
+            <span style="color:#66d9ef">throws</span> NotFoundException <span style="color:#f92672">{</span>
+        <span style="color:#75715e">// If the drawable&#39;s XML lives in our current density qualifier,
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">// it&#39;s okay to use a scaled version from the cache. Otherwise, we
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">// need to actually load the drawable from XML.
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">boolean</span> useCache <span style="color:#f92672">=</span> density <span style="color:#f92672">==</span> 0 <span style="color:#f92672">||</span> value<span style="color:#f92672">.</span><span style="color:#a6e22e">density</span> <span style="color:#f92672">==</span> mMetrics<span style="color:#f92672">.</span><span style="color:#a6e22e">densityDpi</span><span style="color:#f92672">;</span>
+<span style="color:#960050;background-color:#1e0010">···</span>
+
+				<span style="color:#75715e">// mPreloading值仅在startPreloading及finishPreloading方法中被赋值，根据注释说明这两个方法只会被						zygote进程调用所以我们这里mPreloading始终为false
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// First, check whether we have a cached version of this drawable
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// that was inflated against the specified theme. Skip the cache if
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// we&#39;re currently preloading or we&#39;re not using the cache.
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>mPreloading <span style="color:#f92672">&amp;&amp;</span> useCache<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">final</span> Drawable cachedDrawable <span style="color:#f92672">=</span> caches<span style="color:#f92672">.</span><span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span>key<span style="color:#f92672">,</span> wrapper<span style="color:#f92672">,</span> theme<span style="color:#f92672">);</span>
+                <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>cachedDrawable <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                    cachedDrawable<span style="color:#f92672">.</span><span style="color:#a6e22e">setChangingConfigurations</span><span style="color:#f92672">(</span>value<span style="color:#f92672">.</span><span style="color:#a6e22e">changingConfigurations</span><span style="color:#f92672">);</span>
+                    <span style="color:#66d9ef">return</span> cachedDrawable<span style="color:#f92672">;</span>
+                <span style="color:#f92672">}</span>
+            <span style="color:#f92672">}</span>
+
+      <span style="color:#75715e">//这里的TypeValue 是在native层被赋值的。
+</span><span style="color:#75715e"></span>      <span style="color:#75715e">// 具体是 /frameworks/base/libs/androidfw/AssetManager2.cpp：GetResource方法 有兴趣的可以看一下 
+</span><span style="color:#75715e"></span>           <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">boolean</span> isColorDrawable<span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">final</span> DrawableCache caches<span style="color:#f92672">;</span>
+      <span style="color:#75715e">//这里的key 也就是这里的TypeValuedata其实就是resID
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">long</span> key<span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>value<span style="color:#f92672">.</span><span style="color:#a6e22e">type</span> <span style="color:#f92672">&gt;=</span> TypedValue<span style="color:#f92672">.</span><span style="color:#a6e22e">TYPE_FIRST_COLOR_INT</span>
+                    <span style="color:#f92672">&amp;&amp;</span> value<span style="color:#f92672">.</span><span style="color:#a6e22e">type</span> <span style="color:#f92672">&lt;=</span> TypedValue<span style="color:#f92672">.</span><span style="color:#a6e22e">TYPE_LAST_COLOR_INT</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                isColorDrawable <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+                caches <span style="color:#f92672">=</span> mColorDrawableCache<span style="color:#f92672">;</span>
+                key <span style="color:#f92672">=</span> value<span style="color:#f92672">.</span><span style="color:#a6e22e">data</span><span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+                isColorDrawable <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+                caches <span style="color:#f92672">=</span> mDrawableCache<span style="color:#f92672">;</span>
+                key <span style="color:#f92672">=</span> <span style="color:#f92672">(((</span><span style="color:#66d9ef">long</span><span style="color:#f92672">)</span> value<span style="color:#f92672">.</span><span style="color:#a6e22e">assetCookie</span><span style="color:#f92672">)</span> <span style="color:#f92672">&lt;&lt;</span> 32<span style="color:#f92672">)</span> <span style="color:#f92672">|</span> value<span style="color:#f92672">.</span><span style="color:#a6e22e">data</span><span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span>
+      
+      
+            <span style="color:#75715e">// Next, check preloaded drawables. Preloaded drawables may contain
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// unresolved theme attributes.
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">final</span> Drawable<span style="color:#f92672">.</span><span style="color:#a6e22e">ConstantState</span> cs<span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>isColorDrawable<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                cs <span style="color:#f92672">=</span> sPreloadedColorDrawables<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>key<span style="color:#f92672">);</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+                cs <span style="color:#f92672">=</span> sPreloadedDrawables<span style="color:#f92672">[</span>mConfiguration<span style="color:#f92672">.</span><span style="color:#a6e22e">getLayoutDirection</span><span style="color:#f92672">()].</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>key<span style="color:#f92672">);</span>
+            <span style="color:#f92672">}</span>
+
+            Drawable dr<span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">boolean</span> needsNewDrawableAfterCache <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+      <span style="color:#75715e">// 这里预加载池子里没有回 
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>cs <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+       <span style="color:#960050;background-color:#1e0010">···</span>
+                dr <span style="color:#f92672">=</span> cs<span style="color:#f92672">.</span><span style="color:#a6e22e">newDrawable</span><span style="color:#f92672">(</span>wrapper<span style="color:#f92672">);</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>isColorDrawable<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                dr <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ColorDrawable<span style="color:#f92672">(</span>value<span style="color:#f92672">.</span><span style="color:#a6e22e">data</span><span style="color:#f92672">);</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+                dr <span style="color:#f92672">=</span> loadDrawableForCookie<span style="color:#f92672">(</span>wrapper<span style="color:#f92672">,</span> value<span style="color:#f92672">,</span> id<span style="color:#f92672">,</span> density<span style="color:#f92672">);</span>
+            <span style="color:#f92672">}</span>
+<span style="color:#960050;background-color:#1e0010">····</span>
+        
+            <span style="color:#75715e">// Determine if the drawable has unresolved theme attributes. If it
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// does, we&#39;ll need to apply a theme and store it in a theme-specific
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// cache.
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">boolean</span> canApplyTheme <span style="color:#f92672">=</span> dr <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">&amp;&amp;</span> dr<span style="color:#f92672">.</span><span style="color:#a6e22e">canApplyTheme</span><span style="color:#f92672">();</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>canApplyTheme <span style="color:#f92672">&amp;&amp;</span> theme <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+              <span style="color:#75715e">// 如果有theme的特殊配置也会mutate 防止更改缓存中数据
+</span><span style="color:#75715e"></span>                dr <span style="color:#f92672">=</span> dr<span style="color:#f92672">.</span><span style="color:#a6e22e">mutate</span><span style="color:#f92672">();</span>
+                dr<span style="color:#f92672">.</span><span style="color:#a6e22e">applyTheme</span><span style="color:#f92672">(</span>theme<span style="color:#f92672">);</span>
+                dr<span style="color:#f92672">.</span><span style="color:#a6e22e">clearMutated</span><span style="color:#f92672">();</span>
+            <span style="color:#f92672">}</span>
+
+            <span style="color:#75715e">// If we were able to obtain a drawable, store it in the appropriate
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// cache: preload, not themed, null theme, or theme-specific. Don&#39;t
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// pollute the cache with drawables loaded from a foreign density.
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>dr <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                dr<span style="color:#f92672">.</span><span style="color:#a6e22e">setChangingConfigurations</span><span style="color:#f92672">(</span>value<span style="color:#f92672">.</span><span style="color:#a6e22e">changingConfigurations</span><span style="color:#f92672">);</span>
+                <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>useCache<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                  <span style="color:#75715e">//缓存资源
+</span><span style="color:#75715e"></span>                    cacheDrawable<span style="color:#f92672">(</span>value<span style="color:#f92672">,</span> isColorDrawable<span style="color:#f92672">,</span> caches<span style="color:#f92672">,</span> theme<span style="color:#f92672">,</span> canApplyTheme<span style="color:#f92672">,</span> key<span style="color:#f92672">,</span> dr<span style="color:#f92672">);</span>
+                  <span style="color:#75715e">// 目前只有 DrawableContainer（主要是帧动画和statedrawable） 需要。 每次重置新的state
+</span><span style="color:#75715e"></span>                  <span style="color:#75715e">// 要注意帧动画这玩意一开始就会加载所有的图片 及其容易oom
+</span><span style="color:#75715e"></span>                    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>needsNewDrawableAfterCache<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                        Drawable<span style="color:#f92672">.</span><span style="color:#a6e22e">ConstantState</span> state <span style="color:#f92672">=</span> dr<span style="color:#f92672">.</span><span style="color:#a6e22e">getConstantState</span><span style="color:#f92672">();</span>
+                        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>state <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                            dr <span style="color:#f92672">=</span> state<span style="color:#f92672">.</span><span style="color:#a6e22e">newDrawable</span><span style="color:#f92672">(</span>wrapper<span style="color:#f92672">);</span>
+                        <span style="color:#f92672">}</span>
+                    <span style="color:#f92672">}</span>
+                <span style="color:#f92672">}</span>
+            <span style="color:#f92672">}</span>
+
+            <span style="color:#66d9ef">return</span> dr<span style="color:#f92672">;</span>
+<span style="color:#960050;background-color:#1e0010">···</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">   <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">cacheDrawable</span><span style="color:#f92672">(</span>TypedValue value<span style="color:#f92672">,</span> <span style="color:#66d9ef">boolean</span> isColorDrawable<span style="color:#f92672">,</span> DrawableCache caches<span style="color:#f92672">,</span>
+            Resources<span style="color:#f92672">.</span><span style="color:#a6e22e">Theme</span> theme<span style="color:#f92672">,</span> <span style="color:#66d9ef">boolean</span> usesTheme<span style="color:#f92672">,</span> <span style="color:#66d9ef">long</span> key<span style="color:#f92672">,</span> Drawable dr<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">final</span> Drawable<span style="color:#f92672">.</span><span style="color:#a6e22e">ConstantState</span> cs <span style="color:#f92672">=</span> dr<span style="color:#f92672">.</span><span style="color:#a6e22e">getConstantState</span><span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>cs <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">return</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+<span style="color:#75715e">//可以忽略preloading部分
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>mPreloading<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+<span style="color:#960050;background-color:#1e0010">···</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">synchronized</span> <span style="color:#f92672">(</span>mAccessLock<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+              <span style="color:#75715e">// 在这里存进缓存。
+</span><span style="color:#75715e"></span>                caches<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span>key<span style="color:#f92672">,</span> theme<span style="color:#f92672">,</span> cs<span style="color:#f92672">,</span> usesTheme<span style="color:#f92672">);</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div>
+    </div>
+    <div class="post-footer">
+      <div class="info">
+        
+        
+    <span class="separator"><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/drawable/">drawable</a><a class="tag" href="/tags/cache/">cache</a></span>
+
+      </div>
+    </div>
+
+    
+</div>
+
+
+                </div>
+            </div>
+        </div>
+</body>
+<script type="text/javascript" src="https://saucewu.top/js/jquery.min.js"></script>
+<script type="text/javascript" src="https://saucewu.top/js/jquery-migrate.min.js"></script>
+<script type="text/javascript" src="https://saucewu.top/js/jquery-appear.min.js"></script><script type="text/javascript" src="https://saucewu.top/js/medium-zoom.min.js"></script>
+<script>
+	mediumZoom(document.querySelectorAll('div.post-content img'), {
+        background: '#fff'
+    });
+</script>
+<link rel="stylesheet" href="https://saucewu.top/css/medium-zoom.css" type="text/css">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-166235531-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+</html></body>
+
+</html>

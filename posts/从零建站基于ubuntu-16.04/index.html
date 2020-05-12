@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh"><head>
+    <title> Sauce Wu | 从零建站（基于Ubuntu 16.04） </title>
+    <meta charset="utf-8"><meta name="generator" content="Hugo 0.70.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="https://saucewu.top/css/style.css" type="text/css">
+    
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <base href="https://saucewu.top">
+    
+    <link rel="shortcut icon" href="https://saucewu.top/favicons/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://saucewu.top/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://saucewu.top/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://saucewu.top/favicons/favicon-16x16.png">
+
+    <link rel="canonical" href="https://saucewu.top/posts/%E4%BB%8E%E9%9B%B6%E5%BB%BA%E7%AB%99%E5%9F%BA%E4%BA%8Eubuntu-16.04/">
+</head><body><div class="sidebar animated fadeInDown">
+    <div class="logo-title">
+      <div class="title">
+        <img src="https://saucewu.top/images/profile.jpeg" alt="profile picture" style="width:127px;border-radius: 50%;">
+        <h3 title=""><a href="/">Sauce Wu Blog</a></h3>
+        <div class="description">
+          <p></p>
+        </div>
+      </div>
+    </div>
+    <ul class="social-links">
+        
+        <a href="https://github.com/SauceWu" rel="me" >
+          <i class="fa fa-github" aria-hidden="true" title="GitHub"></i>
+        </a>
+        
+        <a href="mailto:sauce.wu@hotmail.com" rel="me" >
+          <i class="fa fa-envelope" aria-hidden="true" title="e-mail"></i>
+        </a>
+        
+    </ul>
+    <div class="footer">
+        <div class="by_farbox">&copy; Sauce Wu 2020 </div>
+      </div>
+    </div>
+</div><div class="main">
+            <div class="page-top animated fadeInDown">
+    <div class="nav">
+        
+        
+        <li><a  href="/" title="">Home</a></li>
+
+        
+        <li><a  href="/posts" title="">Posts</a></li>
+
+        
+    </div>
+</div>
+            <div class="autopagerize_page_element">
+                <div class="content">
+<div class="post animated fadeInDown">
+    <div class="post-content">
+
+      <div class="post-title">
+        <h3>从零建站（基于Ubuntu 16.04）
+        </h3>
+        
+        </div>
+
+    <h1 id="从零建站基于ubuntu-1604">从零建站（基于Ubuntu 16.04）</h1>
+<p>[TOC]</p>
+<h2 id="初始化">初始化</h2>
+<h3 id="免密登录">免密登录</h3>
+<ul>
+<li>client生成ssh公钥</li>
+</ul>
+<blockquote>
+<p>**ssh-keygen -t rsa -C &ldquo;<a href="mailto:xxxxx@xxxxx.com">xxxxx@xxxxx.com</a>&rdquo; **
+Generating public/private rsa key pair&hellip;
+三次回车即可生成 ssh key</p>
+</blockquote>
+<ul>
+<li>将ssh公钥放入service ~/.ssh/authorized_keys 文件下</li>
+<li>重新登陆</li>
+</ul>
+<h3 id="docker">Docker</h3>
+<h4 id="install-docker">INSTALL Docker</h4>
+<ul>
+<li>切换为Docker 官方源</li>
+</ul>
+<blockquote>
+<ul>
+<li>sudo apt-get update</li>
+<li>sudo apt-get install <br>
+apt-transport-https  <br>
+ca-certificates   <br>
+curl  <br>
+software-properties-common</li>
+<li>curl -fsSL <a href="https://download.docker.com/linux/ubuntu/gpg">https://download.docker.com/linux/ubuntu/gpg</a>  |<br>
+sudo apt-key add -</li>
+<li>sudo add-apt-repository<br>
+&ldquo;deb [arch=amd64] <a href="https://download.docker.com/linux/ubuntu">https://download.docker.com/linux/ubuntu</a><br>
+$(lsb_release -cs)<br>
+stable&rdquo;</li>
+</ul>
+</blockquote>
+<ul>
+<li>Install Docker CE</li>
+</ul>
+<blockquote>
+<ul>
+<li>sudo apt-get update</li>
+<li>sudo apt-get install docker-ce</li>
+<li>apt-cache madison docker-ce</li>
+</ul>
+</blockquote>
+<h4 id="创建docker内部网络">创建Docker内部网络</h4>
+<p>没有远程连接mySQL和Redis的需求且link方式连接 容器维护繁琐 使用Docker 内建网络连接 节省端口资源</p>
+<blockquote>
+<ul>
+<li>docker network create network-mysql</li>
+<li>docker network create network-redis</li>
+</ul>
+</blockquote>
+<h4 id="mysql">MySQL</h4>
+<blockquote>
+<ul>
+<li>docker run &ndash;name sauce-mysql -d  -e MYSQL_ROOT_PASSWORD=<!-- raw HTML omitted -->  &ndash;network network-mysql  &ndash;network-alias mysql -v /root/mysql/data:/var/lib/mysql  mysql</li>
+</ul>
+</blockquote>
+<h4 id="redis">Redis</h4>
+<blockquote>
+<ul>
+<li>docker run &ndash;name sauce-redis -d &ndash;network network-redis &ndash;network-alias redis -v /root/redis/data:/data redis</li>
+</ul>
+</blockquote>
+<h4 id="docker-ss">Docker ss</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"> docker run -dt --name ss -p 23333:23333 mritd/shadowsocks -s <span style="color:#e6db74">&#34;-s 0.0.0.0 -p 23333 -m aes-256-cfb -k &lt;your pwd&gt; --fast-open&#34;</span>
+</code></pre></div><h4 id="sspanel--ssgo">SSPanel + SSGo</h4>
+<p>todo</p>
+<h4 id="wordpress">WordPress</h4>
+<h5 id="搭建网站">搭建网站</h5>
+<blockquote>
+<ul>
+<li>docker run &ndash;name sauce-wordpress &ndash;network network-mysql -d -e WORDPRESS_DB_PASSWORD=<!-- raw HTML omitted --> -v /etc/letsencryptlive:/etc/letsencryptlive  -p 80:80 -p 443:443 wordpress</li>
+</ul>
+</blockquote>
+<h5 id="使用https">使用https</h5>
+<p>官方workpress容器使用apache2启动网页</p>
+<ul>
+<li>新建自签名证书或其他可验证证书 放入容器指定目录下</li>
+</ul>
+<blockquote>
+<ul>
+<li>docker  cp /etc/nginx/ssl/ wordpress:/etc/apache2/ssl/</li>
+</ul>
+</blockquote>
+<ul>
+<li>apache2载入ssl模块</li>
+<li>
+<blockquote>
+<ul>
+<li>docker  cp ssl.load  wordpress:/etc/apache2/mods-enabled/</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<p>附 配置文件</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">LoadModule ssl_module /usr/lib/apache2/modules/mod_ssl.so
+</code></pre></div><ul>
+<li>开启443端口配置</li>
+</ul>
+<blockquote>
+<ul>
+<li>docker cp 000-default.conf wordpress:etc/apache2/sites-enabled/
+附配置文件</li>
+</ul>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;VirtualHost</span> <span style="color:#960050;background-color:#1e0010">*:80</span><span style="color:#f92672">&gt;</span>
+	ServerAdmin webmaster@localhost
+	DocumentRoot /var/www/html
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+<span style="color:#f92672">&lt;/VirtualHost&gt;</span>
+<span style="color:#f92672">&lt;VirtualHost</span> <span style="color:#960050;background-color:#1e0010">*:443</span><span style="color:#f92672">&gt;</span>
+	ServerName www.example.com
+	SSLEngine on
+	SSLCertificateFile /etc/letsencrypt/live/域名/cert.pem
+	SSLCertificateKeyFile /etc/letsencrypt/live/域名/privkey.pem
+<span style="color:#f92672">&lt;/VirtualHost&gt;</span>
+</code></pre></div><ul>
+<li>wordpress General Settings的 url 配置到https</li>
+</ul>
+<h4 id="idea-license">Idea License</h4>
+<p>idea系的ide可用的证书哦</p>
+<ul>
+<li>下载 可执行文件 <a href="http://blog.lanyus.com/archives/326.html">here</a></li>
+<li>上传至服务器</li>
+</ul>
+<blockquote>
+<ul>
+<li>$ scp -P  &lt; port &gt; ~/Downloads/IntelliJIDEALicenseServer_linux_amd64 root@&lt; your  ip &gt;:~/root/ideaLicenseServer</li>
+</ul>
+</blockquote>
+<ul>
+<li>新建 Dockerfile</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-dockerfile" data-lang="dockerfile"><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> alpine</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">MAINTAINER</span><span style="color:#e6db74"> your e-mail</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">copy</span> ideaLicenseServer /var/<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">EXPOSE</span><span style="color:#e6db74"> 1027</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span> [<span style="color:#e6db74">&#34;/var/ideaLicenseServer&#34;</span>]<span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><ul>
+<li>构建镜像</li>
+</ul>
+<blockquote>
+<ul>
+<li>$ docker build -t idealicense .</li>
+</ul>
+</blockquote>
+<ul>
+<li>启动镜像</li>
+</ul>
+<blockquote>
+<ul>
+<li>$ docker run -d - - name idealicense -p &lt; your port &gt; :1027  idealicense</li>
+</ul>
+</blockquote>
+<h3 id="nginx">Nginx</h3>
+<h4 id="install-nginx">Install nginx</h4>
+<blockquote>
+<ul>
+<li>$ apt update</li>
+<li>$ apt install nginx</li>
+</ul>
+</blockquote>
+<h4 id="使用">使用</h4>
+<p>开启</p>
+<blockquote>
+<ul>
+<li>$ nginx</li>
+</ul>
+</blockquote>
+<p>关闭</p>
+<blockquote>
+<ul>
+<li>$ ps -ef |grep nginx
+找到nginx 的pid</li>
+<li>$ kill -QUIT &lt; pid &gt;</li>
+</ul>
+</blockquote>
+<h4 id="配置https">配置https</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#960050;background-color:#1e0010">server</span> {
+     <span style="color:#960050;background-color:#1e0010">listen</span> <span style="color:#960050;background-color:#1e0010">443</span> <span style="color:#960050;background-color:#1e0010">ssl;</span>
+	 <span style="color:#960050;background-color:#1e0010">ssl_certificate</span>  <span style="color:#960050;background-color:#1e0010">/etc/nginx/ssl/$DOMAIN.crt;</span>
+	 <span style="color:#960050;background-color:#1e0010">ssl_certificate_key</span> <span style="color:#960050;background-color:#1e0010">/etc/nginx/ssl/$DOMAIN.key;</span>
+}
+</code></pre></div><h4 id="多端口配置自定义域名---配置https">多端口配置自定义域名 +  配置https</h4>
+<p>在/etc/nginx/site-available中新建文件</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">  <span style="color:#960050;background-color:#1e0010">server</span> {
+    <span style="color:#960050;background-color:#1e0010">listen</span>   <span style="color:#960050;background-color:#1e0010">80;</span>
+    <span style="color:#960050;background-color:#1e0010">listen</span>  <span style="color:#960050;background-color:#1e0010">443</span> <span style="color:#960050;background-color:#1e0010">ssl</span>
+    <span style="color:#960050;background-color:#1e0010">server_name</span> <span style="color:#960050;background-color:#1e0010">xx.你的域名;</span>
+    <span style="color:#960050;background-color:#1e0010">location</span> <span style="color:#960050;background-color:#1e0010">/</span> <span style="color:#960050;background-color:#1e0010">{</span>
+        <span style="color:#960050;background-color:#1e0010">proxy_pass</span> <span style="color:#960050;background-color:#1e0010">http://ip:port;</span>
+        <span style="color:#960050;background-color:#1e0010">proxy_set_header</span> <span style="color:#960050;background-color:#1e0010">Host</span> <span style="color:#960050;background-color:#1e0010">$http_host;</span>
+ }
+<span style="color:#960050;background-color:#1e0010">}</span> 
+</code></pre></div><h2 id="维护">维护</h2>
+<h3 id="快照">快照</h3>
+<p>经过如此冗长的配置后 肯定不想重做了吧 快使用快照功能保存吧
+搬瓦工自带的控制台中
+KiwiVM Extras - snapshot</p>
+<p>ps：快照过程中服务器可能会重启 不要害怕</p>
+<h3 id="申请ssl证书">申请ssl证书</h3>
+<p>在这里我使用的是 let&rsquo;s encrypt的免费证书
+要注意的是申请之前要吧占用80端口的进程关掉哦</p>
+<h4 id="只需要单域名">只需要单域名</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker run -it --rm --name certbot -p 80:80 -p 443:443 -v /etc/letsencrypt:/etc/letsencrypt -v /var/lib/letsencrypt:/var/lib/letsencrypt  certbot/certbot certonly 
+</code></pre></div><blockquote>
+<ul>
+<li>Select the appropriate number [1-2] then [enter] (press &lsquo;c&rsquo; to cancel): 1</li>
+<li>Enter email address
+你的邮箱</li>
+<li>(A)gree/(C)ancel: a</li>
+<li>(Y)es/(N)o: y</li>
+<li>Please enter in your domain name(s) (comma and/or space separated)
+<a href="http://www.example.com">www.example.com</a></li>
+</ul>
+</blockquote>
+<p>在/etc/letsencrypt/live/ 域名目录下已经生成你需要的证书了 有效期三个月 记得更换</p>
+<h4 id="通配符域名">通配符域名</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker run -it --rm --name certbot -p 80:80 -p 443:443 -v /etc/letsencrypt:/etc/letsencrypt -v /var/lib/letsencrypt:/var/lib/letsencrypt  certbot/certbot certonly --preferred-challenges dns --server https://acme-v02.api.letsencrypt.org/directory  --manual --email sauce.wu@hotmial.com 
+</code></pre></div><blockquote>
+<ul>
+<li>&hellip;</li>
+<li>Please enter in your domain name(s) (comma and/or space separated)
+*.example.com</li>
+<li>Please deploy a DNS TXT record under the name _acme-challenge.域名 with the following value: sasfasdfasdgasdferqw</li>
+<li>请登陆你的域名管理商  按照给的配置 添加一个 txt类型的DNS解析
+解析生效需要一定时间 不要捉急
+生成位置同上</li>
+</ul>
+</blockquote>
+<h4 id="自动更新脚本-acmesh">自动更新脚本 acme.sh</h4>
+<h5 id="安装">安装</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl https://get.acme.sh | sh
+</code></pre></div><p>获取阿里云的 dns-api</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">export Ali_Key<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;key&#34;</span>
+export Ali_Secret<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;secret&#34;</span>
+</code></pre></div><h5 id="申请证书">申请证书</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">acme.sh  --installcert  -d  saucewu.top   <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>        --key-file   /etc/nginx/ssl/saucewu.sauce.key <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>        --fullchain-file /etc/nginx/ssl/fullchain.cer <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>        --reloadcmd  <span style="color:#e6db74">&#34;service nginx force-reload&#34;</span>
+
+
+</code></pre></div><p>acme.sh  &ndash;installcert  -d  *.saucewu.top  <br>
+&ndash;key-file   /etc/nginx/ssl/saucewu.top.key<br>
+&ndash;fullchain-file /etc/nginx/ssl/fullchain.cer<br>
+&ndash;reloadcmd  &ldquo;service nginx force-reload&rdquo;</p>
+<pre><code>##### 证书更新
+目前证书在 60 天以后会自动更新, 你无需任何操作. 今后有可能会缩短这个时间, 不过都是自动的, 你不用关心.
+
+
+</code></pre>
+    </div>
+    <div class="post-footer">
+      <div class="info">
+        
+        
+    <span class="separator"><a class="tag" href="/tags/service/">service</a><a class="tag" href="/tags/bandwagon/">bandwagon</a><a class="tag" href="/tags/nginx/">nginx</a><a class="tag" href="/tags/docker/">docker</a></span>
+
+      </div>
+    </div>
+
+    
+</div>
+
+
+                </div>
+            </div>
+        </div>
+</body>
+<script type="text/javascript" src="https://saucewu.top/js/jquery.min.js"></script>
+<script type="text/javascript" src="https://saucewu.top/js/jquery-migrate.min.js"></script>
+<script type="text/javascript" src="https://saucewu.top/js/jquery-appear.min.js"></script><script type="text/javascript" src="https://saucewu.top/js/medium-zoom.min.js"></script>
+<script>
+	mediumZoom(document.querySelectorAll('div.post-content img'), {
+        background: '#fff'
+    });
+</script>
+<link rel="stylesheet" href="https://saucewu.top/css/medium-zoom.css" type="text/css">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-166235531-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+</html></body>
+
+</html>

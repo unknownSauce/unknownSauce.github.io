@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh"><head>
+    <title> Sauce Wu | Website of SauceWu  </title>
+    <meta charset="utf-8"><meta name="generator" content="Hugo 0.70.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="https://saucewu.top/css/style.css" type="text/css">
+    
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <base href="https://saucewu.top">
+    
+    <link rel="shortcut icon" href="https://saucewu.top/favicons/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://saucewu.top/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://saucewu.top/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://saucewu.top/favicons/favicon-16x16.png">
+
+    <link rel="canonical" href="https://saucewu.top/">
+</head><body><div class="sidebar animated fadeInDown">
+    <div class="logo-title">
+      <div class="title">
+        <img src="https://saucewu.top/images/profile.jpeg" alt="profile picture" style="width:127px;border-radius: 50%;">
+        <h3 title=""><a href="/">Sauce Wu Blog</a></h3>
+        <div class="description">
+          <p></p>
+        </div>
+      </div>
+    </div>
+    <ul class="social-links">
+        
+        <a href="https://github.com/SauceWu" rel="me" >
+          <i class="fa fa-github" aria-hidden="true" title="GitHub"></i>
+        </a>
+        
+        <a href="mailto:sauce.wu@hotmail.com" rel="me" >
+          <i class="fa fa-envelope" aria-hidden="true" title="e-mail"></i>
+        </a>
+        
+    </ul>
+    <div class="footer">
+        <div class="by_farbox">&copy; Sauce Wu 2020 </div>
+      </div>
+    </div>
+</div><div class="main">
+            <div class="page-top animated fadeInDown">
+    <div class="nav">
+        
+        
+        <li><a class="current" href="/" title="">Home</a></li>
+
+        
+        <li><a  href="/posts" title="">Posts</a></li>
+
+        
+    </div>
+</div>
+            <div class="autopagerize_page_element">
+                <div class="content">
+
+<div class="about animated fadeInDown">
+    
+        
+        <div>
+            <h3><a href="/posts/drawable%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6/">从 setTint 引发的Drawable 的缓存问题</a></h3>
+            从 setTint 引发的Drawable 的缓存问题 这两天在做一个新需求是突然发现 DrawableCompat.setTint()更改drawable 渲染颜色的方法居然是全局生效的。变相说明getResource().getDrawable() 每次取出drawable的时候都是从一个缓存池里面出去的。
+避免缓存的解决方案 第一反应是clone一个新的对象出来进行修改 但是貌似drawable并没有实现Cloneable的借口0那看来得想想别的办法了
+          </div>
+          
+          
+          <div>
+            <a href="/posts/drawable%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6/">Read More…</a>
+          </div>
+          
+        
+    
+        
+        <div>
+            <h3><a href="/posts/vps%E5%AE%89%E5%85%A8%E9%98%B2%E6%8A%A4/">VPS  被暴力尝试登录的几种解决方案</a></h3>
+            VPS 被暴力尝试登录的几种解决方案 [toc]
+背景 最近登录自己blog的服务器时偶然发现
+ There were 34176 failed login attempts since the last successful login.
+          </div>
+          
+          
+          <div>
+            <a href="/posts/vps%E5%AE%89%E5%85%A8%E9%98%B2%E6%8A%A4/">Read More…</a>
+          </div>
+          
+        
+    
+        
+        <div>
+            <h3><a href="/posts/androidx-webview%E5%B4%A9%E6%BA%83/">关于 Androidx 的5.x版本 webview crash</a></h3>
+            关于 Androidx 的5.x版本 webview crash 这两更新了androidx compat 在5.x一下版本手机上遇到crash问题
+android.content.res.Resources$NotFoundException: String resource ID #0x2040002 确定是androidx 1.
+          </div>
+          
+          
+          <div>
+            <a href="/posts/androidx-webview%E5%B4%A9%E6%BA%83/">Read More…</a>
+          </div>
+          
+        
+    
+        
+        <div>
+            <h3><a href="/posts/%E6%B2%89%E6%B5%B8%E5%BC%8F%E7%8A%B6%E6%80%81%E6%A0%8F%E7%9A%84%E8%BD%AF%E9%94%AE%E7%9B%98%E5%BC%B9%E5%87%BA%E9%97%AE%E9%A2%98/"> WebView页面 软键盘弹出无法正确折叠页面的问题</a></h3>
+            WebView页面 软键盘弹出无法正确折叠页面的问题 问题出在webview页面 选中webview中edit控件弹出的软键盘 无法正确折叠页面 遮挡了输入框。一开始认为是webview的适配问题，想当然的加上了
+&lt;activity android:name=&#34;.WebViewActivity&#34; android:windowSoftInputMode=&#34;adjustPan&#34; &gt; .
+          </div>
+          
+          
+          <div>
+            <a href="/posts/%E6%B2%89%E6%B5%B8%E5%BC%8F%E7%8A%B6%E6%80%81%E6%A0%8F%E7%9A%84%E8%BD%AF%E9%94%AE%E7%9B%98%E5%BC%B9%E5%87%BA%E9%97%AE%E9%A2%98/">Read More…</a>
+          </div>
+          
+        
+    
+        
+        <div>
+            <h3><a href="/posts/android-%E7%BC%96%E8%AF%91%E6%9C%9F%E7%9A%84%E9%BB%91%E7%A7%91%E6%8A%80%E4%B8%89-%E5%AD%97%E8%8A%82%E7%A0%81%E7%AF%87/">Android 编译期的黑科技（三）-字节码篇</a></h3>
+            @(奇淫技巧)
+Android 编译期的黑科技（三）-字节码篇 字节码织入 可以绕过编译，直接操作字节码，从而实现代码注入。所以使用 Javassist 的时机就是在构建工具 Gradle 将源 文件编译成 .
+          </div>
+          
+          
+          <div>
+            <a href="/posts/android-%E7%BC%96%E8%AF%91%E6%9C%9F%E7%9A%84%E9%BB%91%E7%A7%91%E6%8A%80%E4%B8%89-%E5%AD%97%E8%8A%82%E7%A0%81%E7%AF%87/">Read More…</a>
+          </div>
+          
+        
+    
+        
+        <div>
+            <h3><a href="/posts/android-%E7%BC%96%E8%AF%91%E6%9C%9F%E7%9A%84%E9%BB%91%E7%A7%91%E6%8A%80%E4%BA%8C-aop%E7%AF%87/">Android 编译期的黑科技（二）基础篇</a></h3>
+            @(奇淫技巧)
+Android 编译期的黑科技（二）-AOP篇 AOP 定义 AOP 是 Aspect Oriented Programming 的缩写，即“面向切面编程”。使用 AOP，可以在编译期间对代码进行动态管理， 以达到统一维护的目的。AOP 是 OOP 编程的一种延续，也是 Spring 框架中的一个重要模块。利用 AOP 可以对业务逻辑 的各个模块进行隔离，从而使得业务逻辑各个部分之间的耦合度降低，提高程序的可重用性，同时提高开发的效率。利用 AOP，我们可以在无浸入的在宿主中插入一些代码逻辑，从而可以实现一些特殊的功能，比如日志埋点、性能监控、动态 权限控制、代码调试等。
+          </div>
+          
+          
+          <div>
+            <a href="/posts/android-%E7%BC%96%E8%AF%91%E6%9C%9F%E7%9A%84%E9%BB%91%E7%A7%91%E6%8A%80%E4%BA%8C-aop%E7%AF%87/">Read More…</a>
+          </div>
+          
+        
+    
+        
+        <div>
+            <h3><a href="/posts/android-%E7%BC%96%E8%AF%91%E6%9C%9F%E7%9A%84%E9%BB%91%E7%A7%91%E6%8A%80%E4%B8%80%E5%9F%BA%E7%A1%80%E7%AF%87/">Android 编译期的黑科技（一）基础篇</a></h3>
+            Android 编译期的黑科技（一）基础篇 序言  为什么需要这些编译期的黑科技 使用这些编译期的小工具可以有效减少 重复代码和重复逻辑 在android中大量运用的ButterKnife Gilde Room和DataBind都大量的时候用编译期生成代码的技术 哪里可以用到这些 应用场景很多 最经典的应用场景是无痕埋点技术和解决重复逻辑 为什么需要这个基础篇 直接上工具当然也可以使用，但毕竟写代码 知其然还要知其所以然 不然除了各种问题无法解决就很尴尬了  什么是编译 它主要的目的是将便于人编写、阅读、维护的高级计算机语言所写作的源代码程序，翻译为计算机能解读、运行的低阶机器语言的程序，也就是可执行文件。编译器将原始程序（source program）作为输入，翻译产生使用目标语言（target language）的等价程序。源代码一般为高级语言（High-level language），如Pascal、C、C++、C# 、Java等，而目标语言则是汇编语言或目标机器的目标代码（Object code），有时也称作机器代码（Machine code）。 java编译专指 .
+          </div>
+          
+          
+          <div>
+            <a href="/posts/android-%E7%BC%96%E8%AF%91%E6%9C%9F%E7%9A%84%E9%BB%91%E7%A7%91%E6%8A%80%E4%B8%80%E5%9F%BA%E7%A1%80%E7%AF%87/">Read More…</a>
+          </div>
+          
+        
+    
+        
+        <div>
+            <h3><a href="/posts/fragment-%E8%B8%A9%E5%9D%91%E5%AE%9E%E5%BD%95/">Fragment 踩坑实录</a></h3>
+            @(四大组件)
+Fragment 踩坑实录 不要轻易使用commitNowAllowingStateLoss 在很多情况下使用不正确使用Fragment 会导致 java.lang.IllegalStateException 网上很多推荐commitNowAllowingStateLoss 来治标 但使用commitNowAllowingStateLoss 会导致当前Fragment 以其子Fragment 丢失状态 如 getVisibility() isHidden() 等等 而且会出现很多不可预知的问题
+          </div>
+          
+          
+          <div>
+            <a href="/posts/fragment-%E8%B8%A9%E5%9D%91%E5%AE%9E%E5%BD%95/">Read More…</a>
+          </div>
+          
+        
+    
+        
+        <div>
+            <h3><a href="/posts/btc-%E7%AC%94%E8%AE%B0/">BTC 笔记</a></h3>
+            @(coin)
+BTC 笔记 [TOC]
+序 主要脉络为精通比特币(第二版) 以 bitoin源码
+比特币原理 2.1交易，块，挖矿和区块链 2.
+          </div>
+          
+          
+          <div>
+            <a href="/posts/btc-%E7%AC%94%E8%AE%B0/">Read More…</a>
+          </div>
+          
+        
+    
+        
+        <div>
+            <h3><a href="/posts/%E4%BB%8E%E9%9B%B6%E5%BB%BA%E7%AB%99%E5%9F%BA%E4%BA%8Eubuntu-16.04/">从零建站（基于Ubuntu 16.04）</a></h3>
+            从零建站（基于Ubuntu 16.04） [TOC]
+初始化 免密登录  client生成ssh公钥   **ssh-keygen -t rsa -C &ldquo;xxxxx@xxxxx.
+          </div>
+          
+          
+          <div>
+            <a href="/posts/%E4%BB%8E%E9%9B%B6%E5%BB%BA%E7%AB%99%E5%9F%BA%E4%BA%8Eubuntu-16.04/">Read More…</a>
+          </div>
+          
+        
+    
+</div>
+
+
+                </div>
+            </div>
+        </div>
+</body>
+<script type="text/javascript" src="https://saucewu.top/js/jquery.min.js"></script>
+<script type="text/javascript" src="https://saucewu.top/js/jquery-migrate.min.js"></script>
+<script type="text/javascript" src="https://saucewu.top/js/jquery-appear.min.js"></script><script type="text/javascript" src="https://saucewu.top/js/medium-zoom.min.js"></script>
+<script>
+	mediumZoom(document.querySelectorAll('div.post-content img'), {
+        background: '#fff'
+    });
+</script>
+<link rel="stylesheet" href="https://saucewu.top/css/medium-zoom.css" type="text/css">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-166235531-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+</html></body>
+
+</html>

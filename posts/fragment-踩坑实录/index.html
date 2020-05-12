@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh"><head>
+    <title> Sauce Wu | Fragment 踩坑实录 </title>
+    <meta charset="utf-8"><meta name="generator" content="Hugo 0.70.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="https://saucewu.top/css/style.css" type="text/css">
+    
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <base href="https://saucewu.top">
+    
+    <link rel="shortcut icon" href="https://saucewu.top/favicons/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://saucewu.top/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://saucewu.top/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://saucewu.top/favicons/favicon-16x16.png">
+
+    <link rel="canonical" href="https://saucewu.top/posts/fragment-%E8%B8%A9%E5%9D%91%E5%AE%9E%E5%BD%95/">
+</head><body><div class="sidebar animated fadeInDown">
+    <div class="logo-title">
+      <div class="title">
+        <img src="https://saucewu.top/images/profile.jpeg" alt="profile picture" style="width:127px;border-radius: 50%;">
+        <h3 title=""><a href="/">Sauce Wu Blog</a></h3>
+        <div class="description">
+          <p></p>
+        </div>
+      </div>
+    </div>
+    <ul class="social-links">
+        
+        <a href="https://github.com/SauceWu" rel="me" >
+          <i class="fa fa-github" aria-hidden="true" title="GitHub"></i>
+        </a>
+        
+        <a href="mailto:sauce.wu@hotmail.com" rel="me" >
+          <i class="fa fa-envelope" aria-hidden="true" title="e-mail"></i>
+        </a>
+        
+    </ul>
+    <div class="footer">
+        <div class="by_farbox">&copy; Sauce Wu 2020 </div>
+      </div>
+    </div>
+</div><div class="main">
+            <div class="page-top animated fadeInDown">
+    <div class="nav">
+        
+        
+        <li><a  href="/" title="">Home</a></li>
+
+        
+        <li><a  href="/posts" title="">Posts</a></li>
+
+        
+    </div>
+</div>
+            <div class="autopagerize_page_element">
+                <div class="content">
+<div class="post animated fadeInDown">
+    <div class="post-content">
+
+      <div class="post-title">
+        <h3>Fragment 踩坑实录
+        </h3>
+        
+        </div>
+
+    <p>@(四大组件)</p>
+<h1 id="fragment-踩坑实录">Fragment 踩坑实录</h1>
+<h3 id="不要轻易使用commitnowallowingstateloss">不要轻易使用commitNowAllowingStateLoss</h3>
+<p>在很多情况下使用不正确使用Fragment 会导致 java.lang.IllegalStateException 网上很多推荐commitNowAllowingStateLoss 来治标
+但使用commitNowAllowingStateLoss 会导致当前Fragment 以其子Fragment 丢失状态 如 getVisibility() isHidden() 等等 而且会出现很多不可预知的问题</p>
+<p>出现问题:</p>
+<ul>
+<li>1 在不正确的时机commit 如 onActivityResult 回调方法中
+fragmentManager的 commit方法只能在onResume-onPause 的状态中使用
+如必须在其他状态下改变状态 建议将状态记录下来 在onResume中执行操作</li>
+<li>2 重复add 同一个Fragment
+由于commit属于异步操作 可能由于commit 过快导致 判断fragment是否为空的方法失效
+应先使用executePendingTransactions让上一次commit执行完成后再执行新的操作</li>
+</ul>
+<h3 id="不要在初始化方法中直接生成新的fragment">不要在初始化方法中直接生成新的Fragment</h3>
+<p>在很多Activity 被重建的情况下 直接生成新的Fragment 会导致旧Fragment 无法回收导致泄露 如果在这些fragment中还有轮训或者socket 回调会导致崩溃
+解决方案:
+为每个Fragment添加tag
+使用findFragmentByTag() 获取Fragment 若为null 再创建新的Fragment</p>
+
+    </div>
+    <div class="post-footer">
+      <div class="info">
+        
+        
+    <span class="separator"><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/fragment/">fragment</a></span>
+
+      </div>
+    </div>
+
+    
+</div>
+
+
+                </div>
+            </div>
+        </div>
+</body>
+<script type="text/javascript" src="https://saucewu.top/js/jquery.min.js"></script>
+<script type="text/javascript" src="https://saucewu.top/js/jquery-migrate.min.js"></script>
+<script type="text/javascript" src="https://saucewu.top/js/jquery-appear.min.js"></script><script type="text/javascript" src="https://saucewu.top/js/medium-zoom.min.js"></script>
+<script>
+	mediumZoom(document.querySelectorAll('div.post-content img'), {
+        background: '#fff'
+    });
+</script>
+<link rel="stylesheet" href="https://saucewu.top/css/medium-zoom.css" type="text/css">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-166235531-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+</html></body>
+
+</html>
