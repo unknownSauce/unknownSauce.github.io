@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh"><head>
+    <title> Sauce Wu | WebView实现离线缓存 </title>
+    <meta charset="utf-8"><meta name="generator" content="Hugo 0.70.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="https://saucewu.github.io/css/style.css" type="text/css">
+    
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <base href="https://saucewu.github.io/">
+    
+    <link rel="shortcut icon" href="https://saucewu.github.io/favicons/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://saucewu.github.io/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://saucewu.github.io/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://saucewu.github.io/favicons/favicon-16x16.png">
+
+    <link rel="canonical" href="https://saucewu.github.io/posts/android-webview%E5%AE%9E%E7%8E%B0%E7%A6%BB%E7%BA%BF%E7%BC%93%E5%AD%98/">
+</head><body><div class="sidebar animated fadeInDown">
+    <div class="logo-title">
+      <div class="title">
+        <img src="https://saucewu.github.io/images/profile.jpeg" alt="profile picture" style="width:127px;border-radius: 50%;">
+        <h3 title=""><a href="/">Sauce Wu Blog</a></h3>
+        <div class="description">
+          <p></p>
+        </div>
+      </div>
+    </div>
+    <ul class="social-links">
+        
+        <a href="https://github.com/SauceWu" rel="me" >
+          <i class="fa fa-github" aria-hidden="true" title="GitHub"></i>
+        </a>
+        
+        <a href="mailto:sauce.wu@hotmail.com" rel="me" >
+          <i class="fa fa-envelope" aria-hidden="true" title="e-mail"></i>
+        </a>
+        
+    </ul>
+    <div class="footer">
+        <div class="by_farbox">&copy; Sauce Wu 2020 </div>
+        <a rel="nofollow" href="http://www.beian.miit.gov.cn" target="_blank"> 津ICP备20001287号-1</a>
+      </div>
+    </div>
+</div><div class="main">
+            <div class="page-top animated fadeInDown">
+    <div class="nav">
+        
+        
+        <li><a  href="/" title="">Home</a></li>
+
+        
+        <li><a  href="/posts" title="">Posts</a></li>
+
+        
+    </div>
+</div>
+            <div class="autopagerize_page_element">
+                <div class="content">
+<div class="post animated fadeInDown">
+    <div class="post-content">
+
+      <div class="post-title">
+        <h3>WebView实现离线缓存
+        </h3>
+        
+        </div>
+
+    <h1 id="webview实现离线缓存">WebView实现离线缓存</h1>
+<h3 id="场景">场景</h3>
+<p>在App在长期发展之中，对动态性要求很高的 活动页面 或是 一些带有简单功能的详情页面都可能会有大量Webview使用的情况。但是webview初始化时极有可能遇到网络波动的影响导致加载不出 或者 会重复下载一些公共资源造成性能问题。这时我们希望有一种缓存方案能够暂时解决这些初始化变慢的问题</p>
+<h3 id="原理">原理</h3>
+<p>android  WebViewClient提供了shouldInterceptRequest的接口供我们使用这个接口会拦截webview所有请求。如果错误缓存了资源，可能会出现web页面无法更新的情况。所以用的时候要谨慎只对我们需要使用缓存的部分进行拦截</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">override</span> <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">shouldInterceptRequest</span>(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
+    <span style="color:#66d9ef">if</span> (view != <span style="color:#66d9ef">null</span> &amp;&amp; request != <span style="color:#66d9ef">null</span>) {
+      <span style="color:#75715e">//判断需要使用缓存的url 
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> (WebViewCacheUtils.needCache(request.url.toString())) {
+          <span style="color:#75715e">//从缓存池中获取缓存
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">val</span> cache = WebViewCacheUtils.getCache(request)
+            <span style="color:#66d9ef">if</span> (cache != <span style="color:#66d9ef">null</span>) {
+                <span style="color:#66d9ef">return</span> cache
+            }
+        }
+    }
+		<span style="color:#75715e">//未找到缓存文件或者不需要缓存 还是正常走请求
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">super</span>.shouldInterceptRequest(view, request)
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">  <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">getCache</span>(webResourceRequest: WebResourceRequest): WebResourceResponse? {
+        <span style="color:#66d9ef">val</span> uri = webResourceRequest.url
+        <span style="color:#66d9ef">try</span> {
+            <span style="color:#75715e">//获取加载资源类型
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">var</span> mimeType: String? = MimeTypeMapUtils.getMimeTypeFromUrl(uri.toString())
+            <span style="color:#66d9ef">val</span> type: String
+            <span style="color:#66d9ef">val</span> header = HashMap&lt;String, String&gt;()
+          <span style="color:#75715e">//我们可能对多个域名进行缓存 先设置跨域
+</span><span style="color:#75715e"></span>            header[<span style="color:#e6db74">&#34;Access-Control-Allow-Origin&#34;</span>] = <span style="color:#e6db74">&#34;*&#34;</span>
+            header[<span style="color:#e6db74">&#34;Access-Control-Allow-Headers&#34;</span>] = <span style="color:#e6db74">&#34;Content-Type&#34;</span>
+            <span style="color:#66d9ef">if</span> (mimeType == <span style="color:#66d9ef">null</span>) {
+                <span style="color:#66d9ef">if</span> (uri.path<span style="color:#f92672">!!</span>.contains(<span style="color:#e6db74">&#34;js&#34;</span>)) {
+                    type = <span style="color:#e6db74">&#34;js&#34;</span>
+                    mimeType = <span style="color:#e6db74">&#34;application/javascript&#34;</span>
+                    header[<span style="color:#e6db74">&#34;content-type&#34;</span>] = <span style="color:#e6db74">&#34;application/javascript; charset=utf-8&#34;</span>
+                } <span style="color:#66d9ef">else</span> {
+                    mimeType = <span style="color:#e6db74">&#34;text/html&#34;</span>
+                    type = <span style="color:#e6db74">&#34;html&#34;</span>
+                    header[<span style="color:#e6db74">&#34;content-type&#34;</span>] = <span style="color:#e6db74">&#34;text/html; charset=utf-8&#34;</span>
+                }
+
+            } <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (mimeType.contains(<span style="color:#e6db74">&#34;img&#34;</span>) || mimeType.contains(<span style="color:#e6db74">&#34;image&#34;</span>)) {
+                type = <span style="color:#e6db74">&#34;img&#34;</span>
+            } <span style="color:#66d9ef">else</span> {
+              <span style="color:#75715e">//这里主要是css 格式是 text/css
+</span><span style="color:#75715e"></span>                type = mimeType.split(<span style="color:#e6db74">&#34;/&#34;</span>.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[<span style="color:#ae81ff">1</span>]
+            }
+<span style="color:#75715e">//确定是否获取了资源类型
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> (!TextUtils.isEmpty(mimeType)) {
+                <span style="color:#66d9ef">val</span> name = (<span style="color:#66d9ef">if</span> (type == <span style="color:#e6db74">&#34;html&#34;</span>) {
+                  <span style="color:#75715e">//由于多个url可能使用的是同一个html 这里需要判断下 返回的是 该html的md5
+</span><span style="color:#75715e"></span>                    needCacheHtml(uri.path)
+                } <span style="color:#66d9ef">else</span> {
+                    MD5Utils.encode(uri.path)
+                })
+              <span style="color:#75715e">//从缓存池中获取缓存 
+</span><span style="color:#75715e"></span>              <span style="color:#66d9ef">val</span> cacheSteam=getWebCache(name, type)
+              <span style="color:#75715e">//构造响应体 并返回
+</span><span style="color:#75715e"></span>             <span style="color:#66d9ef">return</span>  WebResourceResponse(mimeType, <span style="color:#e6db74">&#34;&#34;</span>, <span style="color:#ae81ff">200</span>, <span style="color:#e6db74">&#34;ok&#34;</span>, header, cacheSteam)
+            }
+        } <span style="color:#66d9ef">catch</span> (e: FileNotFoundException) {
+           e.printStackTrace()
+        }
+
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span>
+    }
+</code></pre></div><h3 id="注意事项">注意事项</h3>
+<ul>
+<li>HTML的缓存一定要小心 最好是由前端同学出一份目录 的接口并且做好版本管理 防止误操作 否则线上可能会出严重问题</li>
+<li>存储的文件名都是用md5过的 防止有特殊字符影响持久化</li>
+<li>如果有大文件缓存 最好需要有文件完整性验证</li>
+</ul>
+
+    </div>
+    <div class="post-footer">
+      <div class="info">
+        
+        
+    <span class="separator"><a class="tag" href="/tags/android/">android</a><a class="tag" href="/tags/webview/">webview</a></span>
+
+      </div>
+    </div>
+
+    
+</div>
+
+
+                </div>
+            </div>
+        </div>
+</body>
+<script type="text/javascript" src="https://saucewu.github.io/js/jquery.min.js"></script>
+<script type="text/javascript" src="https://saucewu.github.io/js/jquery-migrate.min.js"></script>
+<script type="text/javascript" src="https://saucewu.github.io/js/jquery-appear.min.js"></script><script type="text/javascript" src="https://saucewu.github.io/js/medium-zoom.min.js"></script>
+<script>
+	mediumZoom(document.querySelectorAll('div.post-content img'), {
+        background: '#fff'
+    });
+</script>
+<link rel="stylesheet" href="https://saucewu.github.io/css/medium-zoom.css" type="text/css">
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-166235531-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+</html></body>
+
+</html>

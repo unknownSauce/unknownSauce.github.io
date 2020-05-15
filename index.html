@@ -37,6 +37,7 @@
     </ul>
     <div class="footer">
         <div class="by_farbox">&copy; Sauce Wu 2020 </div>
+        <a rel="nofollow" href="http://www.beian.miit.gov.cn" target="_blank"> 津ICP备20001287号-1</a>
       </div>
     </div>
 </div><div class="main">
@@ -56,6 +57,20 @@
                 <div class="content">
 
 <div class="about animated fadeInDown">
+    
+        
+        <div>
+            <h3><a href="/posts/jvm%E5%86%85%E5%AD%98%E5%88%86%E5%8C%BA%E7%AC%94%E8%AE%B0/">JVM学习笔记（内存分区篇）</a></h3>
+            JVM学习笔记（内存分区篇） 概述 线程私有区 这三个区是随着线程生命周期创建销毁的。
+程序计数器  与CPU中程序计数器作用相同 ，用于记录当前线程程序现在运行到哪里。 基于CPU的时间片轮转运行机制，CPU并不会把一个线程中的任务做完之后才切换线程，而是在不同线程中不停切换以达到并发的效果，所以我们需要记录下当切程序运行到的指令地址，在下一次轮到该线程执行时可以继续运行。 Java虚拟机中的程序计数器仅仅是虚拟机中的，存在于内存之上的“虚拟”计数器。 要注意的是在运行native方法, 使用的是cpu的程序计数器 JVM中的程序计数器会被定义为undefined。  可能产生的异常  因为程序计数器只是存储一个定长的指令地址，所以不会有OutOfMemoryError出现  虚拟机栈 /本地方法栈   把这两个区的作用大致是一样的，只是Java虚拟机栈运行的是Java方法，本地方法栈运行的是native方法。而且在很多虚拟机(比如HotSpot VM)中把这两个栈融合成所谓的“mixed stack”两种栈帧都可以储存。
+          </div>
+          
+          
+          <div>
+            <a href="/posts/jvm%E5%86%85%E5%AD%98%E5%88%86%E5%8C%BA%E7%AC%94%E8%AE%B0/">Read More…</a>
+          </div>
+          
+        
     
         
         <div>
@@ -82,6 +97,20 @@
           
           <div>
             <a href="/posts/vps%E5%AE%89%E5%85%A8%E9%98%B2%E6%8A%A4/">Read More…</a>
+          </div>
+          
+        
+    
+        
+        <div>
+            <h3><a href="/posts/android-webview%E5%AE%9E%E7%8E%B0%E7%A6%BB%E7%BA%BF%E7%BC%93%E5%AD%98/">WebView实现离线缓存</a></h3>
+            WebView实现离线缓存 场景 在App在长期发展之中，对动态性要求很高的 活动页面 或是 一些带有简单功能的详情页面都可能会有大量Webview使用的情况。但是webview初始化时极有可能遇到网络波动的影响导致加载不出 或者 会重复下载一些公共资源造成性能问题。这时我们希望有一种缓存方案能够暂时解决这些初始化变慢的问题
+原理 android WebViewClient提供了shouldInterceptRequest的接口供我们使用这个接口会拦截webview所有请求。如果错误缓存了资源，可能会出现web页面无法更新的情况。所以用的时候要谨慎只对我们需要使用缓存的部分进行拦截
+          </div>
+          
+          
+          <div>
+            <a href="/posts/android-webview%E5%AE%9E%E7%8E%B0%E7%A6%BB%E7%BA%BF%E7%BC%93%E5%AD%98/">Read More…</a>
           </div>
           
         
@@ -165,36 +194,6 @@ Fragment 踩坑实录 不要轻易使用commitNowAllowingStateLoss 在很多情�
           
           <div>
             <a href="/posts/fragment-%E8%B8%A9%E5%9D%91%E5%AE%9E%E5%BD%95/">Read More…</a>
-          </div>
-          
-        
-    
-        
-        <div>
-            <h3><a href="/posts/btc-%E7%AC%94%E8%AE%B0/">BTC 笔记</a></h3>
-            @(coin)
-BTC 笔记 [TOC]
-序 主要脉络为精通比特币(第二版) 以 bitoin源码
-比特币原理 2.1交易，块，挖矿和区块链 2.
-          </div>
-          
-          
-          <div>
-            <a href="/posts/btc-%E7%AC%94%E8%AE%B0/">Read More…</a>
-          </div>
-          
-        
-    
-        
-        <div>
-            <h3><a href="/posts/%E4%BB%8E%E9%9B%B6%E5%BB%BA%E7%AB%99%E5%9F%BA%E4%BA%8Eubuntu-16.04/">从零建站（基于Ubuntu 16.04）</a></h3>
-            从零建站（基于Ubuntu 16.04） [TOC]
-初始化 免密登录  client生成ssh公钥   **ssh-keygen -t rsa -C &ldquo;xxxxx@xxxxx.
-          </div>
-          
-          
-          <div>
-            <a href="/posts/%E4%BB%8E%E9%9B%B6%E5%BB%BA%E7%AB%99%E5%9F%BA%E4%BA%8Eubuntu-16.04/">Read More…</a>
           </div>
           
         

@@ -6,10 +6,20 @@
     <description>Recent content in webview on Website of SauceWu </description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Tue, 10 Mar 2020 15:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 10 Mar 2020 20:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://saucewu.github.io/tags/webview/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>WebView实现离线缓存</title>
+      <link>https://saucewu.github.io/posts/android-webview%E5%AE%9E%E7%8E%B0%E7%A6%BB%E7%BA%BF%E7%BC%93%E5%AD%98/</link>
+      <pubDate>Tue, 10 Mar 2020 20:00:00 +0000</pubDate>
+      
+      <guid>https://saucewu.github.io/posts/android-webview%E5%AE%9E%E7%8E%B0%E7%A6%BB%E7%BA%BF%E7%BC%93%E5%AD%98/</guid>
+      <description>WebView实现离线缓存 场景 在App在长期发展之中，对动态性要求很高的 活动页面 或是 一些带有简单功能的详情页面都可能会有大量Webview使用的情况。但是webview初始化时极有可能遇到网络波动的影响导致加载不出 或者 会重复下载一些公共资源造成性能问题。这时我们希望有一种缓存方案能够暂时解决这些初始化变慢的问题
+原理 android WebViewClient提供了shouldInterceptRequest的接口供我们使用这个接口会拦截webview所有请求。如果错误缓存了资源，可能会出现web页面无法更新的情况。所以用的时候要谨慎只对我们需要使用缓存的部分进行拦截</description>
+    </item>
     
     <item>
       <title>关于 Androidx 的5.x版本 webview crash</title>
