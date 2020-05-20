@@ -2,41 +2,41 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>aop on Website of SauceWu </title>
-    <link>https://saucewu.github.io/tags/aop/</link>
+    <link>https://www.saucewu.top/tags/aop/</link>
     <description>Recent content in aop on Website of SauceWu </description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <lastBuildDate>Thu, 05 Apr 2018 19:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://saucewu.github.io/tags/aop/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://www.saucewu.top/tags/aop/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Android 编译期的黑科技（三）-字节码篇</title>
-      <link>https://saucewu.github.io/posts/android-%E7%BC%96%E8%AF%91%E6%9C%9F%E7%9A%84%E9%BB%91%E7%A7%91%E6%8A%80%E4%B8%89-%E5%AD%97%E8%8A%82%E7%A0%81%E7%AF%87/</link>
+      <link>https://www.saucewu.top/posts/android-%E7%BC%96%E8%AF%91%E6%9C%9F%E7%9A%84%E9%BB%91%E7%A7%91%E6%8A%80%E4%B8%89-%E5%AD%97%E8%8A%82%E7%A0%81%E7%AF%87/</link>
       <pubDate>Thu, 05 Apr 2018 19:00:00 +0000</pubDate>
       
-      <guid>https://saucewu.github.io/posts/android-%E7%BC%96%E8%AF%91%E6%9C%9F%E7%9A%84%E9%BB%91%E7%A7%91%E6%8A%80%E4%B8%89-%E5%AD%97%E8%8A%82%E7%A0%81%E7%AF%87/</guid>
+      <guid>https://www.saucewu.top/posts/android-%E7%BC%96%E8%AF%91%E6%9C%9F%E7%9A%84%E9%BB%91%E7%A7%91%E6%8A%80%E4%B8%89-%E5%AD%97%E8%8A%82%E7%A0%81%E7%AF%87/</guid>
       <description>@(奇淫技巧)
 Android 编译期的黑科技（三）-字节码篇 字节码织入 可以绕过编译，直接操作字节码，从而实现代码注入。所以使用 Javassist 的时机就是在构建工具 Gradle 将源 文件编译成 .</description>
     </item>
     
     <item>
       <title>Android 编译期的黑科技（二）基础篇</title>
-      <link>https://saucewu.github.io/posts/android-%E7%BC%96%E8%AF%91%E6%9C%9F%E7%9A%84%E9%BB%91%E7%A7%91%E6%8A%80%E4%BA%8C-aop%E7%AF%87/</link>
+      <link>https://www.saucewu.top/posts/android-%E7%BC%96%E8%AF%91%E6%9C%9F%E7%9A%84%E9%BB%91%E7%A7%91%E6%8A%80%E4%BA%8C-aop%E7%AF%87/</link>
       <pubDate>Sat, 17 Mar 2018 19:00:00 +0000</pubDate>
       
-      <guid>https://saucewu.github.io/posts/android-%E7%BC%96%E8%AF%91%E6%9C%9F%E7%9A%84%E9%BB%91%E7%A7%91%E6%8A%80%E4%BA%8C-aop%E7%AF%87/</guid>
+      <guid>https://www.saucewu.top/posts/android-%E7%BC%96%E8%AF%91%E6%9C%9F%E7%9A%84%E9%BB%91%E7%A7%91%E6%8A%80%E4%BA%8C-aop%E7%AF%87/</guid>
       <description>@(奇淫技巧)
 Android 编译期的黑科技（二）-AOP篇 AOP 定义 AOP 是 Aspect Oriented Programming 的缩写，即“面向切面编程”。使用 AOP，可以在编译期间对代码进行动态管理， 以达到统一维护的目的。AOP 是 OOP 编程的一种延续，也是 Spring 框架中的一个重要模块。利用 AOP 可以对业务逻辑 的各个模块进行隔离，从而使得业务逻辑各个部分之间的耦合度降低，提高程序的可重用性，同时提高开发的效率。利用 AOP，我们可以在无浸入的在宿主中插入一些代码逻辑，从而可以实现一些特殊的功能，比如日志埋点、性能监控、动态 权限控制、代码调试等。</description>
     </item>
     
     <item>
       <title>Android 编译期的黑科技（一）基础篇</title>
-      <link>https://saucewu.github.io/posts/android-%E7%BC%96%E8%AF%91%E6%9C%9F%E7%9A%84%E9%BB%91%E7%A7%91%E6%8A%80%E4%B8%80%E5%9F%BA%E7%A1%80%E7%AF%87/</link>
+      <link>https://www.saucewu.top/posts/android-%E7%BC%96%E8%AF%91%E6%9C%9F%E7%9A%84%E9%BB%91%E7%A7%91%E6%8A%80%E4%B8%80%E5%9F%BA%E7%A1%80%E7%AF%87/</link>
       <pubDate>Sat, 10 Mar 2018 19:00:00 +0000</pubDate>
       
-      <guid>https://saucewu.github.io/posts/android-%E7%BC%96%E8%AF%91%E6%9C%9F%E7%9A%84%E9%BB%91%E7%A7%91%E6%8A%80%E4%B8%80%E5%9F%BA%E7%A1%80%E7%AF%87/</guid>
+      <guid>https://www.saucewu.top/posts/android-%E7%BC%96%E8%AF%91%E6%9C%9F%E7%9A%84%E9%BB%91%E7%A7%91%E6%8A%80%E4%B8%80%E5%9F%BA%E7%A1%80%E7%AF%87/</guid>
       <description>Android 编译期的黑科技（一）基础篇 序言  为什么需要这些编译期的黑科技 使用这些编译期的小工具可以有效减少 重复代码和重复逻辑 在android中大量运用的ButterKnife Gilde Room和DataBind都大量的时候用编译期生成代码的技术 哪里可以用到这些 应用场景很多 最经典的应用场景是无痕埋点技术和解决重复逻辑 为什么需要这个基础篇 直接上工具当然也可以使用，但毕竟写代码 知其然还要知其所以然 不然除了各种问题无法解决就很尴尬了  什么是编译 它主要的目的是将便于人编写、阅读、维护的高级计算机语言所写作的源代码程序，翻译为计算机能解读、运行的低阶机器语言的程序，也就是可执行文件。编译器将原始程序（source program）作为输入，翻译产生使用目标语言（target language）的等价程序。源代码一般为高级语言（High-level language），如Pascal、C、C++、C# 、Java等，而目标语言则是汇编语言或目标机器的目标代码（Object code），有时也称作机器代码（Machine code）。 java编译专指 .</description>
     </item>
     

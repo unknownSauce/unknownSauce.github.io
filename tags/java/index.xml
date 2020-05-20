@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>java on Website of SauceWu </title>
-    <link>https://saucewu.github.io/tags/java/</link>
+    <link>https://www.saucewu.top/tags/java/</link>
     <description>Recent content in java on Website of SauceWu </description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <lastBuildDate>Fri, 15 May 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://saucewu.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://www.saucewu.top/tags/java/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>JVM学习笔记（内存分区篇）</title>
-      <link>https://saucewu.github.io/posts/jvm%E5%86%85%E5%AD%98%E5%88%86%E5%8C%BA%E7%AC%94%E8%AE%B0/</link>
+      <link>https://www.saucewu.top/posts/jvm%E5%86%85%E5%AD%98%E5%88%86%E5%8C%BA%E7%AC%94%E8%AE%B0/</link>
       <pubDate>Fri, 15 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://saucewu.github.io/posts/jvm%E5%86%85%E5%AD%98%E5%88%86%E5%8C%BA%E7%AC%94%E8%AE%B0/</guid>
+      <guid>https://www.saucewu.top/posts/jvm%E5%86%85%E5%AD%98%E5%88%86%E5%8C%BA%E7%AC%94%E8%AE%B0/</guid>
       <description>JVM学习笔记（内存分区篇） 概述 线程私有区 这三个区是随着线程生命周期创建销毁的。
 程序计数器  与CPU中程序计数器作用相同 ，用于记录当前线程程序现在运行到哪里。 基于CPU的时间片轮转运行机制，CPU并不会把一个线程中的任务做完之后才切换线程，而是在不同线程中不停切换以达到并发的效果，所以我们需要记录下当切程序运行到的指令地址，在下一次轮到该线程执行时可以继续运行。 Java虚拟机中的程序计数器仅仅是虚拟机中的，存在于内存之上的“虚拟”计数器。 要注意的是在运行native方法, 使用的是cpu的程序计数器 JVM中的程序计数器会被定义为undefined。  可能产生的异常  因为程序计数器只是存储一个定长的指令地址，所以不会有OutOfMemoryError出现  虚拟机栈 /本地方法栈   把这两个区的作用大致是一样的，只是Java虚拟机栈运行的是Java方法，本地方法栈运行的是native方法。而且在很多虚拟机(比如HotSpot VM)中把这两个栈融合成所谓的“mixed stack”两种栈帧都可以储存。</description>
     </item>

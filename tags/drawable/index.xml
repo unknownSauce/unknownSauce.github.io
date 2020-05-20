@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>drawable on Website of SauceWu </title>
-    <link>https://saucewu.github.io/tags/drawable/</link>
+    <link>https://www.saucewu.top/tags/drawable/</link>
     <description>Recent content in drawable on Website of SauceWu </description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <lastBuildDate>Sun, 10 May 2020 15:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://saucewu.github.io/tags/drawable/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://www.saucewu.top/tags/drawable/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>从 setTint 引发的Drawable 的缓存问题</title>
-      <link>https://saucewu.github.io/posts/drawable%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6/</link>
+      <link>https://www.saucewu.top/posts/drawable%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6/</link>
       <pubDate>Sun, 10 May 2020 15:00:00 +0000</pubDate>
       
-      <guid>https://saucewu.github.io/posts/drawable%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6/</guid>
+      <guid>https://www.saucewu.top/posts/drawable%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6/</guid>
       <description>从 setTint 引发的Drawable 的缓存问题 这两天在做一个新需求是突然发现 DrawableCompat.setTint()更改drawable 渲染颜色的方法居然是全局生效的。变相说明getResource().getDrawable() 每次取出drawable的时候都是从一个缓存池里面出去的。
 避免缓存的解决方案 第一反应是clone一个新的对象出来进行修改 但是貌似drawable并没有实现Cloneable的借口0那看来得想想别的办法了</description>
     </item>
